@@ -667,7 +667,10 @@
 
         d3.treemap()
             .size([width, height])
-            .padding(3)
+            .paddingTop(20)
+            .paddingRight(6)
+            .paddingBottom(6)
+            .paddingLeft(6)
             .round(true)
             (root);
 
@@ -728,29 +731,41 @@
                 tooltip.style("opacity", 0);
             });
 
-        // Job title labels
+        // Job title labels - only for larger boxes
         leaf.append("text")
             .attr("class", "node-label")
+            .style("font-size", d => {
+                const w = d.x1 - d.x0;
+                return w < 100 ? "10px" : "12px";
+            })
             .selectAll("tspan")
             .data(d => {
                 const w = d.x1 - d.x0;
                 const h = d.y1 - d.y0;
-                if (w < 60 || h < 40) return [];
-                return [d.data.name];
+                // Only show label if box is large enough
+                if (w < 80 || h < 50) return [];
+                // Truncate long names
+                let name = d.data.name;
+                if (w < 120 && name.length > 12) {
+                    name = name.substring(0, 10) + "...";
+                }
+                return [name];
             })
             .join("tspan")
             .attr("x", 6)
-            .attr("y", 16)
+            .attr("y", 14)
             .text(d => d);
 
-        // Exposure badge
+        // Exposure badge - only for larger boxes
         leaf.append("text")
             .attr("class", "exposure-badge")
+            .style("font-size", "9px")
             .selectAll("tspan")
             .data(d => {
                 const w = d.x1 - d.x0;
                 const h = d.y1 - d.y0;
-                if (w < 80 || h < 60) return [];
+                // Only show badge if box is large enough
+                if (w < 100 || h < 70) return [];
                 const exp = findExposure(d);
                 return [exp === "high" ? "HIGH" : exp === "medium" ? "MED" : "LOW"];
             })
@@ -759,7 +774,7 @@
             .attr("y", (d, i, nodes) => {
                 const parent = d3.select(nodes[i].parentNode);
                 const hasTitle = parent.select(".node-label tspan").size() > 0;
-                return hasTitle ? 30 : 16;
+                return hasTitle ? 28 : 14;
             })
             .text(d => d);
 

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EuroJobs - Tech Jobs in Europe</title>
+    <title>EuroJobs - AI Impact on EU Careers</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         * {
@@ -14,35 +14,46 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #1a1a2e;
-            color: #fff;
+            background: #0a0a0f;
+            color: #e2e8f0;
             min-height: 100vh;
         }
         
         header {
-            padding: 2rem;
+            padding: 2.5rem 2rem;
             text-align: center;
-            border-bottom: 1px solid #333;
+            background: linear-gradient(180deg, #1a1a2e 0%, #0f172a 100%);
+            border-bottom: 1px solid #334155;
         }
         
         h1 {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #dc2626 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            font-weight: 800;
         }
         
         .subtitle {
-            color: #888;
-            font-size: 1.1rem;
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .description {
+            color: #64748b;
+            font-size: 0.95rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
         }
         
         .stats {
             display: flex;
             justify-content: center;
-            gap: 3rem;
-            margin-top: 1.5rem;
+            gap: 4rem;
+            margin-top: 2rem;
         }
         
         .stat {
@@ -50,239 +61,558 @@
         }
         
         .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #667eea;
+            font-size: 2.2rem;
+            font-weight: 800;
         }
         
+        .stat-value.high { color: #dc2626; }
+        .stat-value.medium { color: #f59e0b; }
+        .stat-value.low { color: #10b981; }
+        .stat-value.total { color: #60a5fa; }
+        
         .stat-label {
-            color: #666;
-            font-size: 0.9rem;
+            color: #64748b;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.25rem;
         }
         
         #treemap {
             width: 100%;
-            height: 70vh;
+            height: 75vh;
             padding: 1rem;
         }
         
         .node {
             cursor: pointer;
-            transition: opacity 0.2s;
+            transition: all 0.2s;
         }
         
         .node:hover {
-            opacity: 0.8;
+            opacity: 0.9;
+            stroke: #fff;
+            stroke-width: 2;
         }
         
         .node-label {
             font-size: 12px;
             fill: #fff;
             pointer-events: none;
+            font-weight: 600;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+        
+        .exposure-badge {
+            font-size: 10px;
+            fill: #fff;
+            font-weight: 700;
+            text-transform: uppercase;
+            pointer-events: none;
         }
         
         .tooltip {
             position: absolute;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.9);
-            border: 1px solid #667eea;
-            border-radius: 5px;
+            padding: 16px;
+            background: rgba(15, 23, 42, 0.98);
+            border: 1px solid #475569;
+            border-radius: 12px;
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.2s;
-            max-width: 300px;
+            max-width: 380px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
         
         .tooltip h3 {
-            margin: 0 0 5px 0;
-            color: #667eea;
+            margin: 0 0 8px 0;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
-        .tooltip p {
-            margin: 0;
+        .exposure-indicator {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .exposure-high { background: #dc2626; color: #fff; }
+        .exposure-medium { background: #f59e0b; color: #000; }
+        .exposure-low { background: #10b981; color: #fff; }
+        
+        .tooltip .role-type {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+        }
+        
+        .tooltip .description {
+            color: #e2e8f0;
             font-size: 0.9rem;
-            color: #ccc;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        
+        .tooltip .impact {
+            background: rgba(30, 41, 59, 0.8);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .tooltip .impact-title {
+            color: #fbbf24;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .tooltip .impact-text {
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        
+        .tooltip .skills {
+            color: #60a5fa;
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+        
+        .tooltip .examples {
+            color: #64748b;
+            font-size: 0.75rem;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1.5rem;
+            background: #1e293b;
+            border-top: 1px solid #334155;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
         }
         
         footer {
             text-align: center;
             padding: 2rem;
-            color: #666;
-            border-top: 1px solid #333;
+            color: #475569;
+            font-size: 0.85rem;
+            border-top: 1px solid #1e293b;
+        }
+        
+        footer a {
+            color: #60a5fa;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
     <header>
         <h1>🇪🇺 EuroJobs</h1>
-        <p class="subtitle">Tech Jobs across Europe - Visualized</p>
+        <p class="subtitle">AI Impact on European Public Sector Careers</p>
+        <p class="description">How artificial intelligence is transforming roles across EU institutions, agencies, and public administration. Based on Eurostat, EPSO, and EU Careers data.</p>
+        
         <div class="stats">
             <div class="stat">
-                <div class="stat-value" id="total-jobs">0</div>
-                <div class="stat-label">Total Jobs</div>
+                <div class="stat-value high" id="high-count">0</div>
+                <div class="stat-label">High AI Impact</div>
             </div>
             <div class="stat">
-                <div class="stat-value" id="total-countries">0</div>
-                <div class="stat-label">Countries</div>
+                <div class="stat-value medium" id="medium-count">0</div>
+                <div class="stat-label">Medium Impact</div>
             </div>
             <div class="stat">
-                <div class="stat-value" id="total-companies">0</div>
-                <div class="stat-label">Companies</div>
+                <div class="stat-value low" id="low-count">0</div>
+                <div class="stat-label">Low Impact</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value total" id="total-roles">0</div>
+                <div class="stat-label">Total Roles</div>
             </div>
         </div>
     </header>
     
     <div id="treemap"></div>
+    
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color" style="background: #dc2626;"></div>
+            <span>High AI Exposure (>70% tasks automatable)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #f59e0b;"></div>
+            <span>Medium Exposure (30-70%)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #10b981;"></div>
+            <span>Low Exposure (<30%)</span>
+        </div>
+    </div>
+    
     <div class="tooltip" id="tooltip"></div>
     
     <footer>
-        <p>Data sources: LinkedIn, Indeed, StepStone | Last updated: <span id="last-updated"></span></p>
+        <p>Inspired by <a href="https://karpathy.ai/jobs/" target="_blank">karpathy.ai/jobs</a> | Data sources: EPSO, Eurostat, EU Careers Portal, OECD AI Employment Outlook</p>
+        <p>Last updated: April 2026 | Size = Number of professionals in EU institutions</p>
     </footer>
 
     <script>
-        // Sample data - Structure: Country -> City -> Company -> Jobs
+        // Job roles with AI exposure analysis - Structure similar to Karpathy
         const jobData = {
-            name: "Europe",
+            name: "EU Public Sector Careers",
             children: [
                 {
-                    name: "Germany",
+                    name: "HIGH AI EXPOSURE",
+                    exposure: "high",
                     children: [
                         {
-                            name: "Berlin",
+                            name: "Language Services",
                             children: [
-                                { name: "SAP", value: 45, jobs: ["AI Engineer", "Data Scientist", "Product Manager"] },
-                                { name: "Zalando", value: 32, jobs: ["ML Engineer", "Backend Dev", "Data Analyst"] },
-                                { name: "N26", value: 28, jobs: ["Senior Developer", "DevOps Engineer"] }
+                                { 
+                                    name: "Translator", 
+                                    value: 2800, 
+                                    exposure: "high",
+                                    description: "Converts documents between EU languages",
+                                    aiImpact: "DeepL and GPT-4 achieve 90%+ accuracy in EU language pairs. Post-editing workflows now standard. Demand shifting from translation to revision.",
+                                    skills: "Neural MT post-editing, terminology management, quality assurance",
+                                    examples: "EC Translation Service, Court of Justice"
+                                },
+                                { 
+                                    name: "Interpreter", 
+                                    value: 1200, 
+                                    exposure: "high",
+                                    description: "Simultaneous/consecutive interpretation at meetings",
+                                    aiImpact: "Real-time AI interpretation (Kudo, Interprefy) reducing need for physical presence. Hybrid AI+human models emerging.",
+                                    skills: "AI-assisted interpretation, remote platform expertise",
+                                    examples: "European Parliament, European Council"
+                                },
+                                { 
+                                    name: "Proofreader", 
+                                    value: 600, 
+                                    exposure: "high",
+                                    description: "Reviews and corrects official texts",
+                                    aiImpact: "Grammarly-style tools integrated into EC workflows. Automated style checking reducing manual review time by 60%.",
+                                    skills: "AI editing tools, style guide automation",
+                                    examples: "Publications Office, EU institutions"
+                                }
                             ]
                         },
                         {
-                            name: "Munich",
+                            name: "Document Processing",
                             children: [
-                                { name: "BMW", value: 38, jobs: ["Autonomous Driving Engineer", "AI Researcher"] },
-                                { name: "Siemens", value: 42, jobs: ["Software Architect", "Cloud Engineer"] },
-                                { name: "Personio", value: 25, jobs: ["Full Stack Dev", "Engineering Manager"] }
+                                { 
+                                    name: "Administrative Assistant", 
+                                    value: 4500, 
+                                    exposure: "high",
+                                    description: "Document management, meeting support, correspondence",
+                                    aiImpact: "RPA bots handling 40% of routine document processing. AI assistants drafting standard responses. Role shifting to exception handling.",
+                                    skills: "RPA oversight, AI prompt engineering, workflow automation",
+                                    examples: "All EU institutions, agencies"
+                                },
+                                { 
+                                    name: "Legal Drafter", 
+                                    value: 800, 
+                                    exposure: "high",
+                                    description: "Prepares legal texts and documentation",
+                                    aiImpact: "GPT-4 drafting first versions of standard legal acts. 50% time reduction for routine legislation. Human focus on complex policy issues.",
+                                    skills: "AI-assisted drafting, legal reasoning validation",
+                                    examples: "European Commission Legal Service, Council"
+                                }
                             ]
                         },
                         {
-                            name: "Hamburg",
+                            name: "Research & Analysis",
                             children: [
-                                { name: "Xing", value: 18, jobs: ["Frontend Dev", "Product Designer"] },
-                                { name: "About You", value: 22, jobs: ["Data Engineer", "Platform Engineer"] }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    name: "France",
-                    children: [
-                        {
-                            name: "Paris",
-                            children: [
-                                { name: "SaaBoo", value: 35, jobs: ["AI Engineer", "Tech Lead"] },
-                                { name: "BlaBlaCar", value: 30, jobs: ["Senior Backend", "Data Scientist"] },
-                                { name: "Doctolib", value: 40, jobs: ["Full Stack", "DevOps", "Security Engineer"] }
+                                { 
+                                    name: "Data Entry Clerk", 
+                                    value: 1500, 
+                                    exposure: "high",
+                                    description: "Inputs and validates statistical/economic data",
+                                    aiImpact: "OCR + AI extraction achieving 95% accuracy for Eurostat surveys. Structured data ingestion largely automated.",
+                                    skills: "Data validation, AI error correction, quality assurance",
+                                    examples: "Eurostat, ECB, EU agencies"
+                                },
+                                { 
+                                    name: "Library/Info Assistant", 
+                                    value: 400, 
+                                    exposure: "high",
+                                    description: "Manages document archives and information retrieval",
+                                    aiImpact: "Vector search (RAG) replacing traditional cataloging. AI answering 70% of research queries automatically.",
+                                    skills: "Semantic search, RAG systems, knowledge graphs",
+                                    examples: "European Parliament Library, Court archives"
+                                }
                             ]
                         },
                         {
-                            name: "Lyon",
+                            name: "Software & Tech",
                             children: [
-                                { name: "Ubisoft", value: 28, jobs: ["Game Developer", "AI Programmer"] }
+                                { 
+                                    name: "Software Developer", 
+                                    value: 3200, 
+                                    exposure: "high",
+                                    description: "Builds applications for EU institutions",
+                                    aiImpact: "GitHub Copilot writing 30-40% of code. AI testing and documentation. Focus shifting to architecture and complex problem-solving.",
+                                    skills: "AI pair programming, prompt engineering, system design",
+                                    examples: "DIGIT, EU agencies IT departments"
+                                },
+                                { 
+                                    name: "Test Engineer", 
+                                    value: 900, 
+                                    exposure: "high",
+                                    description: "QA and testing of EU systems",
+                                    aiImpact: "AI-generated test cases covering 80% of scenarios. Automated regression testing. Human focus on edge cases and UX.",
+                                    skills: "AI test generation, automated QA pipelines",
+                                    examples: "DIGIT, Eurostat IT"
+                                }
                             ]
                         }
                     ]
                 },
                 {
-                    name: "Netherlands",
+                    name: "MEDIUM AI EXPOSURE",
+                    exposure: "medium",
                     children: [
                         {
-                            name: "Amsterdam",
+                            name: "Statistics & Analysis",
                             children: [
-                                { name: "Booking.com", value: 55, jobs: ["Data Scientist", "ML Engineer", "Product Manager"] },
-                                { name: "Adyen", value: 35, jobs: ["Platform Engineer", "Security Engineer"] },
-                                { name: "TomTom", value: 30, jobs: ["Maps Engineer", "AI Researcher"] }
+                                { 
+                                    name: "Statistical Officer", 
+                                    value: 1800, 
+                                    exposure: "medium",
+                                    description: "Designs surveys and analyzes EU statistics",
+                                    aiImpact: "AutoML generating baseline models. AI handling routine seasonal adjustments. Human expertise critical for methodology and policy interpretation.",
+                                    skills: "AI-assisted modeling, survey methodology, policy analysis",
+                                    examples: "Eurostat, ECB, National Statistical Institutes"
+                                },
+                                { 
+                                    name: "Data Scientist", 
+                                    value: 1200, 
+                                    exposure: "medium",
+                                    description: "Advanced analytics and predictive modeling",
+                                    aiImpact: "AI coding assistants speeding up analysis. Automated feature engineering. Human creativity still central to insight generation.",
+                                    skills: "Python/R, ML ops, causal inference, AI collaboration",
+                                    examples: "Eurostat, JRC, EU agencies"
+                                },
+                                { 
+                                    name: "Economic Analyst", 
+                                    value: 1600, 
+                                    exposure: "medium",
+                                    description: "Economic research and policy assessment",
+                                    aiImpact: "AI summarizing research papers and market data. Forecasting models automated. Human judgment essential for policy recommendations.",
+                                    skills: "Economic modeling, policy analysis, AI research tools",
+                                    examples: "ECFIN, EEA, OECD"
+                                }
+                            ]
+                        },
+                        {
+                            name: "Policy & Advisory",
+                            children: [
+                                { 
+                                    name: "Policy Officer", 
+                                    value: 2400, 
+                                    exposure: "medium",
+                                    description: "Develops and implements EU policies",
+                                    aiImpact: "AI drafting initial impact assessments. Stakeholder sentiment analysis automated. Political judgment and negotiation remain human.",
+                                    skills: "Policy analysis, stakeholder management, AI research",
+                                    examples: "European Commission DGs, EU agencies"
+                                },
+                                { 
+                                    name: "Legal Advisor", 
+                                    value: 1900, 
+                                    exposure: "medium",
+                                    description: "Provides legal counsel on EU law",
+                                    aiImpact: "AI legal research (Casetext-style) reducing case law review time. Document analysis automated. Strategic legal reasoning still human.",
+                                    skills: "EU law, legal AI tools, case strategy",
+                                    examples: "European Commission Legal Service, Court"
+                                },
+                                { 
+                                    name: "Scientific Officer", 
+                                    value: 1100, 
+                                    exposure: "medium",
+                                    description: "Scientific assessment and policy support",
+                                    aiImpact: "AI literature reviews and evidence synthesis. Risk assessment models. Scientific judgment and peer review remain critical.",
+                                    skills: "Scientific methodology, AI evidence tools, peer review",
+                                    examples: "EFSA, EMA, EEA, JRC"
+                                }
+                            ]
+                        },
+                        {
+                            name: "Finance & Audit",
+                            children: [
+                                { 
+                                    name: "Auditor", 
+                                    value: 900, 
+                                    exposure: "medium",
+                                    description: "Financial and compliance auditing",
+                                    aiImpact: "AI anomaly detection flagging 80% of issues. Automated sampling. Human judgment for complex fraud and systemic risks.",
+                                    skills: "Audit methodology, AI analytics, risk assessment",
+                                    examples: "European Court of Auditors, Internal Audit"
+                                },
+                                { 
+                                    name: "Budget Officer", 
+                                    value: 700, 
+                                    exposure: "medium",
+                                    description: "Manages EU budget and grants",
+                                    aiImpact: "AI monitoring grant compliance and flagging irregularities. Automated reporting. Strategic resource allocation remains human.",
+                                    skills: "Budget management, financial analysis, AI monitoring",
+                                    examples: "European Commission, EU agencies"
+                                }
+                            ]
+                        },
+                        {
+                            name: "Communications",
+                            children: [
+                                { 
+                                    name: "Communications Officer", 
+                                    value: 1100, 
+                                    exposure: "medium",
+                                    description: "Public relations and media management",
+                                    aiImpact: "AI drafting press releases and social content. Sentiment monitoring automated. Strategy and crisis comms remain human.",
+                                    skills: "Strategic comms, media relations, AI content tools",
+                                    examples: "EC Spokespersons' Service, EU agencies"
+                                },
+                                { 
+                                    name: "Graphic Designer", 
+                                    value: 400, 
+                                    exposure: "medium",
+                                    description: "Visual design for EU publications",
+                                    aiImpact: "Midjourney/DALL-E for initial concepts. AI layout suggestions. Creative direction and brand consistency human.",
+                                    skills: "Visual design, AI image generation, brand systems",
+                                    examples: "Publications Office, EU institutions"
+                                }
                             ]
                         }
                     ]
                 },
                 {
-                    name: "UK",
+                    name: "LOW AI EXPOSURE",
+                    exposure: "low",
                     children: [
                         {
-                            name: "London",
+                            name: "Leadership & Strategy",
                             children: [
-                                { name: "DeepMind", value: 60, jobs: ["AI Researcher", "Research Engineer", "ML Scientist"] },
-                                { name: "Revolut", value: 45, jobs: ["Backend Engineer", "Data Engineer"] }
+                                { 
+                                    name: "Director/Head of Unit", 
+                                    value: 2500, 
+                                    exposure: "low",
+                                    description: "Leads departments and sets strategic direction",
+                                    aiImpact: "AI assisting with data-driven briefings. Decision support tools. Political acumen, negotiation, and leadership remain fundamentally human.",
+                                    skills: "Strategic leadership, political judgment, change management",
+                                    examples: "All EU institutions, directorate level"
+                                },
+                                { 
+                                    name: "Program Manager", 
+                                    value: 1300, 
+                                    exposure: "low",
+                                    description: "Manages complex EU programs and projects",
+                                    aiImpact: "AI project tracking and risk alerts. Stakeholder analysis. Human essential for conflict resolution and adaptive leadership.",
+                                    skills: "Program management, stakeholder alignment, governance",
+                                    examples: "European Commission, EIB, EU agencies"
+                                }
                             ]
-                        }
-                    ]
-                },
-                {
-                    name: "Switzerland",
-                    children: [
+                        },
                         {
-                            name: "Zurich",
+                            name: "Diplomacy & Negotiation",
                             children: [
-                                { name: "Google Zurich", value: 50, jobs: ["Software Engineer", "Research Scientist"] },
-                                { name: "ETH Spin-offs", value: 25, jobs: ["AI Engineer", "Robotics Engineer"] }
+                                { 
+                                    name: "Diplomat/Negotiator", 
+                                    value: 800, 
+                                    exposure: "low",
+                                    description: "International negotiations and representation",
+                                    aiImpact: "AI briefing documents and scenario modeling. Real-time translation. Core negotiation strategy and relationship building human.",
+                                    skills: "Negotiation, diplomatic protocol, strategic thinking",
+                                    examples: "EEAS, Council, Member State representations"
+                                },
+                                { 
+                                    name: "Lobbyist/PA Specialist", 
+                                    value: 300, 
+                                    exposure: "low",
+                                    description: "Public affairs and stakeholder engagement",
+                                    aiImpact: "AI monitoring legislative developments. Network mapping. Trust-building and persuasive communication remain human.",
+                                    skills: "Political acumen, network building, advocacy",
+                                    examples: "EU representations, trade associations"
+                                }
                             ]
-                        }
-                    ]
-                },
-                {
-                    name: "Sweden",
-                    children: [
+                        },
                         {
-                            name: "Stockholm",
+                            name: "Specialized Legal",
                             children: [
-                                { name: "Spotify", value: 48, jobs: ["ML Engineer", "Data Engineer", "Backend Dev"] },
-                                { name: "Klarna", value: 35, jobs: ["Fintech Engineer", "Data Scientist"] }
+                                { 
+                                    name: "Judge/Advocate General", 
+                                    value: 200, 
+                                    exposure: "low",
+                                    description: "Adjudicates EU law cases",
+                                    aiImpact: "AI legal research assistance. Drafting support. Judicial reasoning, precedent interpretation, and final judgment remain human.",
+                                    skills: "Judicial reasoning, EU law interpretation, case management",
+                                    examples: "Court of Justice of the European Union"
+                                },
+                                { 
+                                    name: "Litigation Lawyer", 
+                                    value: 350, 
+                                    exposure: "low",
+                                    description: "Represents EU in court proceedings",
+                                    aiImpact: "AI document review and precedent research. Oral argument strategy and courtroom advocacy remain human skills.",
+                                    skills: "Litigation strategy, oral advocacy, EU procedural law",
+                                    examples: "European Commission Legal Service, Court"
+                                }
                             ]
-                        }
-                    ]
-                },
-                {
-                    name: "Estonia",
-                    children: [
+                        },
                         {
-                            name: "Tallinn",
+                            name: "Field Operations",
                             children: [
-                                { name: "Wise", value: 40, jobs: ["Full Stack", "Platform Engineer"] },
-                                { name: "Bolt", value: 32, jobs: ["Mobile Dev", "Backend Engineer"] }
+                                { 
+                                    name: "Field Officer", 
+                                    value: 600, 
+                                    exposure: "low",
+                                    description: "Manages EU programs in member states/third countries",
+                                    aiImpact: "AI monitoring and reporting. Local context understanding, relationship management, and adaptive implementation remain human.",
+                                    skills: "Field operations, local stakeholder management, context analysis",
+                                    examples: "Commission representations, EUDs, humanitarian aid"
+                                },
+                                { 
+                                    name: "Inspector", 
+                                    value: 450, 
+                                    exposure: "low",
+                                    description: "On-site inspections and verification",
+                                    aiImpact: "AI pre-screening and documentation. Physical inspection, interviewing, and contextual judgment remain human.",
+                                    skills: "Investigation, regulatory inspection, evidence gathering",
+                                    examples: "OLAF, ECA, EU agencies"
+                                }
                             ]
-                        }
-                    ]
-                },
-                {
-                    name: "Ireland",
-                    children: [
+                        },
                         {
-                            name: "Dublin",
+                            name: "Security & Safety",
                             children: [
-                                { name: "Stripe", value: 45, jobs: ["Infrastructure Engineer", "Security Engineer"] },
-                                { name: "Intercom", value: 28, jobs: ["Product Engineer", "Data Analyst"] }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    name: "Spain",
-                    children: [
-                        {
-                            name: "Barcelona",
-                            children: [
-                                { name: "Glovo", value: 30, jobs: ["Mobile Dev", "ML Engineer"] },
-                                { name: "Wallapop", value: 20, jobs: ["Full Stack", "Product Manager"] }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    name: "Poland",
-                    children: [
-                        {
-                            name: "Warsaw",
-                            children: [
-                                { name: "CD Projekt Red", value: 35, jobs: ["Game Developer", "Engine Programmer"] }
+                                { 
+                                    name: "Security Officer", 
+                                    value: 500, 
+                                    exposure: "low",
+                                    description: "Physical and information security",
+                                    aiImpact: "AI threat detection and monitoring systems. Response planning and crisis management remain human-led.",
+                                    skills: "Security operations, crisis management, risk assessment",
+                                    examples: "EU institutions security services"
+                                }
                             ]
                         }
                     ]
@@ -290,36 +620,37 @@
             ]
         };
 
-        // Color scale
-        const colorScale = d3.scaleOrdinal()
-            .domain(["Germany", "France", "Netherlands", "UK", "Switzerland", "Sweden", "Estonia", "Ireland", "Spain", "Poland"])
-            .range(["#667eea", "#764ba2", "#f093fb", "#f5576c", "#4facfe", "#00f2fe", "#43e97b", "#fa709a", "#fee140", "#30cfd0"]);
+        // Exposure colors
+        const exposureColors = {
+            high: "#dc2626",
+            medium: "#f59e0b", 
+            low: "#10b981"
+        };
 
-        // Calculate stats
-        function calculateStats(data) {
-            let totalJobs = 0;
-            let companies = new Set();
-            let countries = new Set();
+        // Calculate statistics
+        function calculateStats() {
+            let high = 0, medium = 0, low = 0, total = 0;
             
-            function traverse(node, country) {
+            function traverse(node) {
                 if (node.children) {
-                    node.children.forEach(child => traverse(child, country || node.name));
+                    node.children.forEach(traverse);
                 } else {
-                    totalJobs += node.value || 0;
-                    if (node.name) companies.add(node.name);
-                    if (country) countries.add(country);
+                    total++;
+                    if (node.exposure === "high") high++;
+                    else if (node.exposure === "medium") medium++;
+                    else if (node.exposure === "low") low++;
                 }
             }
             
-            traverse(data);
+            traverse(jobData);
             
-            document.getElementById('total-jobs').textContent = totalJobs;
-            document.getElementById('total-countries').textContent = countries.size;
-            document.getElementById('total-companies').textContent = companies.size;
+            document.getElementById('high-count').textContent = high;
+            document.getElementById('medium-count').textContent = medium;
+            document.getElementById('low-count').textContent = low;
+            document.getElementById('total-roles').textContent = total;
         }
 
-        calculateStats(jobData);
-        document.getElementById('last-updated').textContent = new Date().toLocaleDateString();
+        calculateStats();
 
         // Create treemap
         const width = document.getElementById('treemap').clientWidth;
@@ -336,66 +667,100 @@
 
         d3.treemap()
             .size([width, height])
-            .padding(2)
+            .padding(3)
             .round(true)
             (root);
 
         const tooltip = d3.select("#tooltip");
+
+        // Find exposure level for coloring
+        function findExposure(node) {
+            if (node.data.exposure) return node.data.exposure;
+            if (node.parent) return findExposure(node.parent);
+            return null;
+        }
 
         const leaf = svg.selectAll("g")
             .data(root.leaves())
             .join("g")
             .attr("transform", d => `translate(${d.x0},${d.y0})`);
 
+        // Rectangles
         leaf.append("rect")
             .attr("class", "node")
             .attr("width", d => d.x1 - d.x0)
             .attr("height", d => d.y1 - d.y0)
             .attr("fill", d => {
-                // Find country (parent of parent of parent)
-                let ancestor = d;
-                while (ancestor.depth > 1) ancestor = ancestor.parent;
-                return colorScale(ancestor.data.name);
+                const exp = findExposure(d);
+                return exposureColors[exp] || "#64748b";
             })
-            .attr("stroke", "#1a1a2e")
+            .attr("stroke", "#0a0a0f")
             .attr("stroke-width", 1)
             .on("mouseover", function(event, d) {
+                const exp = findExposure(d);
+                const expClass = `exposure-${exp}`;
+                const expText = exp === "high" ? "High" : exp === "medium" ? "Medium" : "Low";
+                
                 tooltip.style("opacity", 1)
                     .html(`
-                        <h3>${d.data.name}</h3>
-                        <p><strong>${d.data.value}</strong> open positions</p>
-                        <p>${d.data.jobs ? d.data.jobs.join(", ") : ""}</p>
-                        <p style="color: #888; margin-top: 5px;">${d.parent.data.name}, ${d.parent.parent.data.name}</p>
+                        <h3>
+                            ${d.data.name}
+                            <span class="exposure-indicator ${expClass}">${expText}</span>
+                        </h3>
+                        <div class="role-type">${d.parent.data.name} • ${d.parent.parent.data.name}</div>
+                        <div class="description">${d.data.description}</div>
+                        <div class="impact">
+                            <div class="impact-title">AI Impact</div>
+                            <div class="impact-text">${d.data.aiImpact}</div>
+                        </div>
+                        <div class="skills">Key skills: ${d.data.skills}</div>
+                        <div class="examples">${d.data.examples}</div>
                     `)
-                    .style("left", (event.pageX + 10) + "px")
+                    .style("left", (event.pageX + 15) + "px")
                     .style("top", (event.pageY - 10) + "px");
             })
             .on("mousemove", function(event) {
                 tooltip
-                    .style("left", (event.pageX + 10) + "px")
+                    .style("left", (event.pageX + 15) + "px")
                     .style("top", (event.pageY - 10) + "px");
             })
             .on("mouseout", function() {
                 tooltip.style("opacity", 0);
-            })
-            .on("click", function(event, d) {
-                // Could link to company career page
-                console.log("Clicked:", d.data.name);
             });
 
-        // Add labels for larger rectangles
+        // Job title labels
         leaf.append("text")
             .attr("class", "node-label")
             .selectAll("tspan")
             .data(d => {
-                const width = d.x1 - d.x0;
-                const height = d.y1 - d.y0;
-                if (width < 60 || height < 30) return [];
-                return [d.data.name, `${d.data.value} jobs`];
+                const w = d.x1 - d.x0;
+                const h = d.y1 - d.y0;
+                if (w < 60 || h < 40) return [];
+                return [d.data.name];
             })
             .join("tspan")
-            .attr("x", 5)
-            .attr("y", (d, i) => 15 + i * 14)
+            .attr("x", 6)
+            .attr("y", 16)
+            .text(d => d);
+
+        // Exposure badge
+        leaf.append("text")
+            .attr("class", "exposure-badge")
+            .selectAll("tspan")
+            .data(d => {
+                const w = d.x1 - d.x0;
+                const h = d.y1 - d.y0;
+                if (w < 80 || h < 60) return [];
+                const exp = findExposure(d);
+                return [exp === "high" ? "HIGH" : exp === "medium" ? "MED" : "LOW"];
+            })
+            .join("tspan")
+            .attr("x", 6)
+            .attr("y", (d, i, nodes) => {
+                const parent = d3.select(nodes[i].parentNode);
+                const hasTitle = parent.select(".node-label tspan").size() > 0;
+                return hasTitle ? 30 : 16;
+            })
             .text(d => d);
 
         // Responsive

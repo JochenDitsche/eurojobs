@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EuroJobs - Tech Jobs in Europe</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        header {
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: #888;
+            font-size: 1.1rem;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 1.5rem;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        #treemap {
+            width: 100%;
+            height: 70vh;
+            padding: 1rem;
+        }
+        
+        .node {
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .node:hover {
+            opacity: 0.8;
+        }
+        
+        .node-label {
+            font-size: 12px;
+            fill: #fff;
+            pointer-events: none;
+        }
+        
+        .tooltip {
+            position: absolute;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #667eea;
+            border-radius: 5px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            max-width: 300px;
+        }
+        
+        .tooltip h3 {
+            margin: 0 0 5px 0;
+            color: #667eea;
+        }
+        
+        .tooltip p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            border-top: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🇪🇺 EuroJobs</h1>
+        <p class="subtitle">Tech Jobs across Europe - Visualized</p>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="total-jobs">0</div>
+                <div class="stat-label">Total Jobs</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="total-countries">0</div>
+                <div class="stat-label">Countries</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="total-companies">0</div>
+                <div class="stat-label">Companies</div>
+            </div>
+        </div>
+    </header>
+    
+    <div id="treemap"></div>
+    <div class="tooltip" id="tooltip"></div>
+    
+    <footer>
+        <p>Data sources: LinkedIn, Indeed, StepStone | Last updated: <span id="last-updated"></span></p>
+    </footer>
+
+    <script>
+        // Sample data - Structure: Country -> City -> Company -> Jobs
+        const jobData = {
+            name: "Europe",
+            children: [
+                {
+                    name: "Germany",
+                    children: [
+                        {
+                            name: "Berlin",
+                            children: [
+                                { name: "SAP", value: 45, jobs: ["AI Engineer", "Data Scientist", "Product Manager"] },
+                                { name: "Zalando", value: 32, jobs: ["ML Engineer", "Backend Dev", "Data Analyst"] },
+                                { name: "N26", value: 28, jobs: ["Senior Developer", "DevOps Engineer"] }
+                            ]
+                        },
+                        {
+                            name: "Munich",
+                            children: [
+                                { name: "BMW", value: 38, jobs: ["Autonomous Driving Engineer", "AI Researcher"] },
+                                { name: "Siemens", value: 42, jobs: ["Software Architect", "Cloud Engineer"] },
+                                { name: "Personio", value: 25, jobs: ["Full Stack Dev", "Engineering Manager"] }
+                            ]
+                        },
+                        {
+                            name: "Hamburg",
+                            children: [
+                                { name: "Xing", value: 18, jobs: ["Frontend Dev", "Product Designer"] },
+                                { name: "About You", value: 22, jobs: ["Data Engineer", "Platform Engineer"] }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "France",
+                    children: [
+                        {
+                            name: "Paris",
+                            children: [
+                                { name: "SaaBoo", value: 35, jobs: ["AI Engineer", "Tech Lead"] },
+                                { name: "BlaBlaCar", value: 30, jobs: ["Senior Backend", "Data Scientist"] },
+                                { name: "Doctolib", value: 40, jobs: ["Full Stack", "DevOps", "Security Engineer"] }
+                            ]
+                        },
+                        {
+                            name: "Lyon",
+                            children: [
+                                { name: "Ubisoft", value: 28, jobs: ["Game Developer", "AI Programmer"] }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Netherlands",
+                    children: [
+                        {
+                            name: "Amsterdam",
+                            children: [
+                                { name: "Booking.com", value: 55, jobs: ["Data Scientist", "ML Engineer", "Product Manager"] },
+                                { name: "Adyen", value: 35, jobs: ["Platform Engineer", "Security Engineer"] },
+                                { name: "TomTom", value: 30, jobs: ["Maps Engineer", "AI Researcher"] }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "UK",
+                    children: [
+                        {
+                            name: "London",
+                            children: [
+                                { name: "DeepMind", value: 60, jobs: ["AI Researcher", "Research Engineer", "ML Scientist"] },
+                                { name: "Revolut", value: 45, jobs: ["Backend Engineer", "Data Engineer"] }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Switzerland",
+                    children: [
+                        {
+                            name: "Zurich",
+                            children: [
+                                { name: "Google Zurich", value: 50, jobs: ["Software Engineer", "Research Scientist"] },
+                                { name: "ETH Spin-offs", value: 25, jobs: ["AI Engineer", "Robotics Engineer"] }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Sweden",
+                    children: [
+                        {
+                            name: "Stockholm",
+                            children: [
+                                { name: "Spotify", value: 48, jobs: ["ML Engineer", "Data Engineer", "Backend Dev"] },
+                                { name: "Klarna", value: 35, jobs: ["Fintech Engineer", "Data Scientist"] }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Estonia",
+                    children: [
+                        {
+                            name: "Tallinn",
+                            children: [
+                                { name: "Wise", value: 40, jobs: ["Full Stack", "Platform Engineer"] },
+                                { name: "Bolt", value: 32, jobs: ["Mobile Dev", "Backend Engineer"] }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Ireland",
+                    children: [
+                        {
+                            name: "Dublin",
+                            children: [
+                                { name: "Stripe", value: 45, jobs: ["Infrastructure Engineer", "Security Engineer"] },
+                                { name: "Intercom", value: 28, jobs: ["Product Engineer", "Data Analyst"] }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Spain",
+                    children: [
+                        {
+                            name: "Barcelona",
+                            children: [
+                                { name: "Glovo", value: 30, jobs: ["Mobile Dev", "ML Engineer"] },
+                                { name: "Wallapop", value: 20, jobs: ["Full Stack", "Product Manager"] }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Poland",
+                    children: [
+                        {
+                            name: "Warsaw",
+                            children: [
+                                { name: "CD Projekt Red", value: 35, jobs: ["Game Developer", "Engine Programmer"] }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // Color scale
+        const colorScale = d3.scaleOrdinal()
+            .domain(["Germany", "France", "Netherlands", "UK", "Switzerland", "Sweden", "Estonia", "Ireland", "Spain", "Poland"])
+            .range(["#667eea", "#764ba2", "#f093fb", "#f5576c", "#4facfe", "#00f2fe", "#43e97b", "#fa709a", "#fee140", "#30cfd0"]);
+
+        // Calculate stats
+        function calculateStats(data) {
+            let totalJobs = 0;
+            let companies = new Set();
+            let countries = new Set();
+            
+            function traverse(node, country) {
+                if (node.children) {
+                    node.children.forEach(child => traverse(child, country || node.name));
+                } else {
+                    totalJobs += node.value || 0;
+                    if (node.name) companies.add(node.name);
+                    if (country) countries.add(country);
+                }
+            }
+            
+            traverse(data);
+            
+            document.getElementById('total-jobs').textContent = totalJobs;
+            document.getElementById('total-countries').textContent = countries.size;
+            document.getElementById('total-companies').textContent = companies.size;
+        }
+
+        calculateStats(jobData);
+        document.getElementById('last-updated').textContent = new Date().toLocaleDateString();
+
+        // Create treemap
+        const width = document.getElementById('treemap').clientWidth;
+        const height = document.getElementById('treemap').clientHeight;
+
+        const svg = d3.select("#treemap")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        const root = d3.hierarchy(jobData)
+            .sum(d => d.value)
+            .sort((a, b) => b.value - a.value);
+
+        d3.treemap()
+            .size([width, height])
+            .padding(2)
+            .round(true)
+            (root);
+
+        const tooltip = d3.select("#tooltip");
+
+        const leaf = svg.selectAll("g")
+            .data(root.leaves())
+            .join("g")
+            .attr("transform", d => `translate(${d.x0},${d.y0})`);
+
+        leaf.append("rect")
+            .attr("class", "node")
+            .attr("width", d => d.x1 - d.x0)
+            .attr("height", d => d.y1 - d.y0)
+            .attr("fill", d => {
+                // Find country (parent of parent of parent)
+                let ancestor = d;
+                while (ancestor.depth > 1) ancestor = ancestor.parent;
+                return colorScale(ancestor.data.name);
+            })
+            .attr("stroke", "#1a1a2e")
+            .attr("stroke-width", 1)
+            .on("mouseover", function(event, d) {
+                tooltip.style("opacity", 1)
+                    .html(`
+                        <h3>${d.data.name}</h3>
+                        <p><strong>${d.data.value}</strong> open positions</p>
+                        <p>${d.data.jobs ? d.data.jobs.join(", ") : ""}</p>
+                        <p style="color: #888; margin-top: 5px;">${d.parent.data.name}, ${d.parent.parent.data.name}</p>
+                    `)
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 10) + "px");
+            })
+            .on("mousemove", function(event) {
+                tooltip
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 10) + "px");
+            })
+            .on("mouseout", function() {
+                tooltip.style("opacity", 0);
+            })
+            .on("click", function(event, d) {
+                // Could link to company career page
+                console.log("Clicked:", d.data.name);
+            });
+
+        // Add labels for larger rectangles
+        leaf.append("text")
+            .attr("class", "node-label")
+            .selectAll("tspan")
+            .data(d => {
+                const width = d.x1 - d.x0;
+                const height = d.y1 - d.y0;
+                if (width < 60 || height < 30) return [];
+                return [d.data.name, `${d.data.value} jobs`];
+            })
+            .join("tspan")
+            .attr("x", 5)
+            .attr("y", (d, i) => 15 + i * 14)
+            .text(d => d);
+
+        // Responsive
+        window.addEventListener('resize', () => {
+            location.reload();
+        });
+    </script>
+</body>
+</html>

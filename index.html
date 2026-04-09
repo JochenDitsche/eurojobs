@@ -3,784 +3,884 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EuroJobs - AI Impact on EU Careers</title>
+    <title>🇪🇺 Eurostat AI Impact Explorer</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0f;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
             color: #e2e8f0;
             min-height: 100vh;
+            overflow-x: hidden;
         }
         
+        .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
+        
         header {
-            padding: 2.5rem 2rem;
             text-align: center;
-            background: linear-gradient(180deg, #1a1a2e 0%, #0f172a 100%);
-            border-bottom: 1px solid #334155;
+            padding: 30px 20px;
+            border-bottom: 1px solid #2d3748;
+            margin-bottom: 25px;
         }
         
         h1 {
-            font-size: 2.8rem;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #dc2626 100%);
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-weight: 800;
+            margin-bottom: 8px;
         }
         
-        .subtitle {
-            color: #94a3b8;
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
+        .subtitle { color: #94a3b8; font-size: 1.1rem; }
         
-        .description {
-            color: #64748b;
-            font-size: 0.95rem;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.5;
-        }
-        
-        .stats {
+        .controls {
             display: flex;
+            gap: 20px;
             justify-content: center;
-            gap: 4rem;
-            margin-top: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 16px;
+            border: 1px solid #334155;
+            backdrop-filter: blur(10px);
         }
         
-        .stat {
-            text-align: center;
-        }
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
         
-        .stat-value {
-            font-size: 2.2rem;
-            font-weight: 800;
-        }
-        
-        .stat-value.high { color: #dc2626; }
-        .stat-value.medium { color: #f59e0b; }
-        .stat-value.low { color: #10b981; }
-        .stat-value.total { color: #60a5fa; }
-        
-        .stat-label {
-            color: #64748b;
+        .control-group label {
             font-size: 0.85rem;
+            color: #64748b;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-top: 0.25rem;
+            font-weight: 600;
         }
         
-        #treemap {
-            width: 100%;
-            height: 75vh;
-            padding: 1rem;
-        }
-        
-        .node {
+        select, button {
+            padding: 12px 20px;
+            border: 1px solid #475569;
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.2s;
         }
         
-        .node:hover {
-            opacity: 0.9;
-            stroke: #fff;
-            stroke-width: 2;
+        select:hover, button:hover { 
+            border-color: #60a5fa; 
+            background: #252f47;
+            transform: translateY(-1px);
         }
         
-        .node-label {
-            font-size: 12px;
-            fill: #fff;
-            pointer-events: none;
-            font-weight: 600;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        button.active { 
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6); 
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
         }
         
-        .exposure-badge {
-            font-size: 10px;
-            fill: #fff;
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: rgba(30, 41, 59, 0.6);
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
             font-weight: 700;
-            text-transform: uppercase;
-            pointer-events: none;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
+        
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            padding: 15px;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 10px;
+        }
+        
+        .legend-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .legend-color { 
+            width: 24px; 
+            height: 24px; 
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        #treemap-container {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            border: 1px solid #334155;
+            overflow: hidden;
+            position: relative;
+            min-height: 700px;
+        }
+        
+        .loading, .error {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 700px;
+            font-size: 1.2rem;
+            color: #64748b;
+        }
+        
+        .error { color: #ef4444; }
+        
+        .breadcrumbs {
+            padding: 15px 20px;
+            background: rgba(30, 41, 59, 0.8);
+            border-bottom: 1px solid #334155;
+            font-size: 0.95rem;
+        }
+        
+        .breadcrumbs span { cursor: pointer; color: #60a5fa; }
+        .breadcrumbs span:hover { text-decoration: underline; }
+        .breadcrumbs .current { color: #e2e8f0; cursor: default; }
+        .breadcrumbs .current:hover { text-decoration: none; }
         
         .tooltip {
             position: absolute;
-            padding: 16px;
+            padding: 16px 20px;
             background: rgba(15, 23, 42, 0.98);
             border: 1px solid #475569;
             border-radius: 12px;
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.2s;
-            max-width: 380px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            z-index: 100;
+            max-width: 360px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
         }
         
-        .tooltip h3 {
-            margin: 0 0 8px 0;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .exposure-indicator {
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-        
-        .exposure-high { background: #dc2626; color: #fff; }
-        .exposure-medium { background: #f59e0b; color: #000; }
-        .exposure-low { background: #10b981; color: #fff; }
-        
-        .tooltip .role-type {
-            color: #94a3b8;
-            font-size: 0.85rem;
-            margin-bottom: 12px;
-        }
-        
-        .tooltip .description {
-            color: #e2e8f0;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin-bottom: 12px;
-        }
-        
-        .tooltip .impact {
-            background: rgba(30, 41, 59, 0.8);
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-        }
-        
-        .tooltip .impact-title {
-            color: #fbbf24;
-            font-size: 0.8rem;
+        .tooltip h3 { 
+            font-size: 1.1rem; 
+            margin-bottom: 10px; 
+            color: #f8fafc;
             font-weight: 600;
-            margin-bottom: 4px;
         }
         
-        .tooltip .impact-text {
-            color: #cbd5e1;
-            font-size: 0.85rem;
-            line-height: 1.4;
-        }
-        
-        .tooltip .skills {
-            color: #60a5fa;
-            font-size: 0.8rem;
-            margin-top: 8px;
-        }
-        
-        .tooltip .examples {
-            color: #64748b;
-            font-size: 0.75rem;
-            margin-top: 8px;
-            font-style: italic;
-        }
-        
-        .legend {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            padding: 1.5rem;
-            background: #1e293b;
-            border-top: 1px solid #334155;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+        .tooltip-row { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 6px 0;
             font-size: 0.9rem;
-            color: #cbd5e1;
+            border-bottom: 1px solid #334155;
         }
         
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
+        .tooltip-row:last-child { border-bottom: none; }
+        .tooltip-label { color: #94a3b8; }
+        .tooltip-value { font-weight: 600; color: #e2e8f0; }
+        
+        .node {
+            cursor: pointer;
+            transition: all 0.1s;
         }
         
-        footer {
-            text-align: center;
-            padding: 2rem;
-            color: #475569;
-            font-size: 0.85rem;
-            border-top: 1px solid #1e293b;
+        .node:hover {
+            filter: brightness(1.1);
         }
         
-        footer a {
-            color: #60a5fa;
-            text-decoration: none;
+        .node-label {
+            pointer-events: none;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            #treemap-container { min-height: 500px; }
+            .controls { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>🇪🇺 EuroJobs</h1>
-        <p class="subtitle">AI Impact on European Public Sector Careers</p>
-        <p class="description">How artificial intelligence is transforming roles across EU institutions, agencies, and public administration. Based on Eurostat, EPSO, and EU Careers data.</p>
+    <div class="container">
+        <header>
+            <h1>🇪🇺 Eurostat AI Impact Explorer</h1>
+            <p class="subtitle">Detailed European Labor Market Analysis by Occupation & AI Risk</p>
+        </header>
         
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-value high" id="high-count">0</div>
-                <div class="stat-label">High AI Impact</div>
+        <div class="controls">
+            <div class="control-group">
+                <label>View Mode</label>
+                <div>
+                    <button id="btn-eu" class="active" onclick="setMode('eu')">🇪🇺 All Europe</button>
+                    <button id="btn-country" onclick="setMode('country')">🏳️ By Country</button>
+                </div>
             </div>
-            <div class="stat">
-                <div class="stat-value medium" id="medium-count">0</div>
-                <div class="stat-label">Medium Impact</div>
+            
+            <div class="control-group">
+                <label>Select Country</label>
+                <select id="country-select" onchange="selectCountry(this.value)" disabled>
+                    <option value="">Choose a country...</option>
+                </select>
             </div>
-            <div class="stat">
-                <div class="stat-value low" id="low-count">0</div>
-                <div class="stat-label">Low Impact</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value total" id="total-roles">0</div>
-                <div class="stat-label">Total Roles</div>
+            
+            <div class="control-group">
+                <label>Navigation</label>
+                <button id="btn-back" onclick="goBack()" disabled>← Back to Overview</button>
             </div>
         </div>
-    </header>
-    
-    <div id="treemap"></div>
-    
-    <div class="legend">
-        <div class="legend-item">
-            <div class="legend-color" style="background: #dc2626;"></div>
-            <span>High AI Exposure (>70% tasks automatable)</span>
+        
+        <div class="stats-bar" id="stats-bar">
+            <!-- Stats will be populated by JS -->
         </div>
-        <div class="legend-item">
-            <div class="legend-color" style="background: #f59e0b;"></div>
-            <span>Medium Exposure (30-70%)</span>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #dc2626, #ef4444);"></div>
+                <span>🔴 High AI Risk (≥7.5)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);"></div>
+                <span>🟡 Medium Risk (5.0-7.5)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #10b981, #34d399);"></div>
+                <span>🟢 Low Risk (<5.0)</span>
+            </div>
         </div>
-        <div class="legend-item">
-            <div class="legend-color" style="background: #10b981;"></div>
-            <span>Low Exposure (<30%)</span>
+        
+        <div id="treemap-container">
+            <div class="breadcrumbs" id="breadcrumbs" style="display: none;">
+                <span id="bc-root" onclick="goToRoot()">Overview</span>
+                <span id="bc-separator" style="display: none;"> → </span>
+                <span id="bc-current" class="current"></span>
+            </div>
+            <div class="loading" id="loading">Loading data...</div>
         </div>
+        
+        <!-- Country Insights Panel -->
+        <div id="insights-panel" style="display: none; margin-top: 25px; padding: 25px; background: rgba(30, 41, 59, 0.8); border-radius: 16px; border: 1px solid #334155;">
+            <h2 id="insights-title" style="font-size: 1.5rem; margin-bottom: 20px; color: #f8fafc;"></h2>
+            
+            <div id="insights-content" style="color: #e2e8f0; line-height: 1.7;">
+                <!-- Content will be populated by JS -->
+            </div>
+        </div>
+        
     </div>
     
     <div class="tooltip" id="tooltip"></div>
     
-    <footer>
-        <p>Inspired by <a href="https://karpathy.ai/jobs/" target="_blank">karpathy.ai/jobs</a> | Data sources: EPSO, Eurostat, EU Careers Portal, OECD AI Employment Outlook</p>
-        <p>Last updated: April 2026 | Size = Number of professionals in EU institutions</p>
-    </footer>
-
     <script>
-        // Job roles with AI exposure analysis - Structure similar to Karpathy
-        const jobData = {
-            name: "EU Public Sector Careers",
-            children: [
-                {
-                    name: "HIGH AI EXPOSURE",
-                    exposure: "high",
-                    children: [
-                        {
-                            name: "Language Services",
-                            children: [
-                                { 
-                                    name: "Translator", 
-                                    value: 2800, 
-                                    exposure: "high",
-                                    description: "Converts documents between EU languages",
-                                    aiImpact: "DeepL and GPT-4 achieve 90%+ accuracy in EU language pairs. Post-editing workflows now standard. Demand shifting from translation to revision.",
-                                    skills: "Neural MT post-editing, terminology management, quality assurance",
-                                    examples: "EC Translation Service, Court of Justice"
-                                },
-                                { 
-                                    name: "Interpreter", 
-                                    value: 1200, 
-                                    exposure: "high",
-                                    description: "Simultaneous/consecutive interpretation at meetings",
-                                    aiImpact: "Real-time AI interpretation (Kudo, Interprefy) reducing need for physical presence. Hybrid AI+human models emerging.",
-                                    skills: "AI-assisted interpretation, remote platform expertise",
-                                    examples: "European Parliament, European Council"
-                                },
-                                { 
-                                    name: "Proofreader", 
-                                    value: 600, 
-                                    exposure: "high",
-                                    description: "Reviews and corrects official texts",
-                                    aiImpact: "Grammarly-style tools integrated into EC workflows. Automated style checking reducing manual review time by 60%.",
-                                    skills: "AI editing tools, style guide automation",
-                                    examples: "Publications Office, EU institutions"
-                                }
-                            ]
-                        },
-                        {
-                            name: "Document Processing",
-                            children: [
-                                { 
-                                    name: "Administrative Assistant", 
-                                    value: 4500, 
-                                    exposure: "high",
-                                    description: "Document management, meeting support, correspondence",
-                                    aiImpact: "RPA bots handling 40% of routine document processing. AI assistants drafting standard responses. Role shifting to exception handling.",
-                                    skills: "RPA oversight, AI prompt engineering, workflow automation",
-                                    examples: "All EU institutions, agencies"
-                                },
-                                { 
-                                    name: "Legal Drafter", 
-                                    value: 800, 
-                                    exposure: "high",
-                                    description: "Prepares legal texts and documentation",
-                                    aiImpact: "GPT-4 drafting first versions of standard legal acts. 50% time reduction for routine legislation. Human focus on complex policy issues.",
-                                    skills: "AI-assisted drafting, legal reasoning validation",
-                                    examples: "European Commission Legal Service, Council"
-                                }
-                            ]
-                        },
-                        {
-                            name: "Research & Analysis",
-                            children: [
-                                { 
-                                    name: "Data Entry Clerk", 
-                                    value: 1500, 
-                                    exposure: "high",
-                                    description: "Inputs and validates statistical/economic data",
-                                    aiImpact: "OCR + AI extraction achieving 95% accuracy for Eurostat surveys. Structured data ingestion largely automated.",
-                                    skills: "Data validation, AI error correction, quality assurance",
-                                    examples: "Eurostat, ECB, EU agencies"
-                                },
-                                { 
-                                    name: "Library/Info Assistant", 
-                                    value: 400, 
-                                    exposure: "high",
-                                    description: "Manages document archives and information retrieval",
-                                    aiImpact: "Vector search (RAG) replacing traditional cataloging. AI answering 70% of research queries automatically.",
-                                    skills: "Semantic search, RAG systems, knowledge graphs",
-                                    examples: "European Parliament Library, Court archives"
-                                }
-                            ]
-                        },
-                        {
-                            name: "Software & Tech",
-                            children: [
-                                { 
-                                    name: "Software Developer", 
-                                    value: 3200, 
-                                    exposure: "high",
-                                    description: "Builds applications for EU institutions",
-                                    aiImpact: "GitHub Copilot writing 30-40% of code. AI testing and documentation. Focus shifting to architecture and complex problem-solving.",
-                                    skills: "AI pair programming, prompt engineering, system design",
-                                    examples: "DIGIT, EU agencies IT departments"
-                                },
-                                { 
-                                    name: "Test Engineer", 
-                                    value: 900, 
-                                    exposure: "high",
-                                    description: "QA and testing of EU systems",
-                                    aiImpact: "AI-generated test cases covering 80% of scenarios. Automated regression testing. Human focus on edge cases and UX.",
-                                    skills: "AI test generation, automated QA pipelines",
-                                    examples: "DIGIT, Eurostat IT"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    name: "MEDIUM AI EXPOSURE",
-                    exposure: "medium",
-                    children: [
-                        {
-                            name: "Statistics & Analysis",
-                            children: [
-                                { 
-                                    name: "Statistical Officer", 
-                                    value: 1800, 
-                                    exposure: "medium",
-                                    description: "Designs surveys and analyzes EU statistics",
-                                    aiImpact: "AutoML generating baseline models. AI handling routine seasonal adjustments. Human expertise critical for methodology and policy interpretation.",
-                                    skills: "AI-assisted modeling, survey methodology, policy analysis",
-                                    examples: "Eurostat, ECB, National Statistical Institutes"
-                                },
-                                { 
-                                    name: "Data Scientist", 
-                                    value: 1200, 
-                                    exposure: "medium",
-                                    description: "Advanced analytics and predictive modeling",
-                                    aiImpact: "AI coding assistants speeding up analysis. Automated feature engineering. Human creativity still central to insight generation.",
-                                    skills: "Python/R, ML ops, causal inference, AI collaboration",
-                                    examples: "Eurostat, JRC, EU agencies"
-                                },
-                                { 
-                                    name: "Economic Analyst", 
-                                    value: 1600, 
-                                    exposure: "medium",
-                                    description: "Economic research and policy assessment",
-                                    aiImpact: "AI summarizing research papers and market data. Forecasting models automated. Human judgment essential for policy recommendations.",
-                                    skills: "Economic modeling, policy analysis, AI research tools",
-                                    examples: "ECFIN, EEA, OECD"
-                                }
-                            ]
-                        },
-                        {
-                            name: "Policy & Advisory",
-                            children: [
-                                { 
-                                    name: "Policy Officer", 
-                                    value: 2400, 
-                                    exposure: "medium",
-                                    description: "Develops and implements EU policies",
-                                    aiImpact: "AI drafting initial impact assessments. Stakeholder sentiment analysis automated. Political judgment and negotiation remain human.",
-                                    skills: "Policy analysis, stakeholder management, AI research",
-                                    examples: "European Commission DGs, EU agencies"
-                                },
-                                { 
-                                    name: "Legal Advisor", 
-                                    value: 1900, 
-                                    exposure: "medium",
-                                    description: "Provides legal counsel on EU law",
-                                    aiImpact: "AI legal research (Casetext-style) reducing case law review time. Document analysis automated. Strategic legal reasoning still human.",
-                                    skills: "EU law, legal AI tools, case strategy",
-                                    examples: "European Commission Legal Service, Court"
-                                },
-                                { 
-                                    name: "Scientific Officer", 
-                                    value: 1100, 
-                                    exposure: "medium",
-                                    description: "Scientific assessment and policy support",
-                                    aiImpact: "AI literature reviews and evidence synthesis. Risk assessment models. Scientific judgment and peer review remain critical.",
-                                    skills: "Scientific methodology, AI evidence tools, peer review",
-                                    examples: "EFSA, EMA, EEA, JRC"
-                                }
-                            ]
-                        },
-                        {
-                            name: "Finance & Audit",
-                            children: [
-                                { 
-                                    name: "Auditor", 
-                                    value: 900, 
-                                    exposure: "medium",
-                                    description: "Financial and compliance auditing",
-                                    aiImpact: "AI anomaly detection flagging 80% of issues. Automated sampling. Human judgment for complex fraud and systemic risks.",
-                                    skills: "Audit methodology, AI analytics, risk assessment",
-                                    examples: "European Court of Auditors, Internal Audit"
-                                },
-                                { 
-                                    name: "Budget Officer", 
-                                    value: 700, 
-                                    exposure: "medium",
-                                    description: "Manages EU budget and grants",
-                                    aiImpact: "AI monitoring grant compliance and flagging irregularities. Automated reporting. Strategic resource allocation remains human.",
-                                    skills: "Budget management, financial analysis, AI monitoring",
-                                    examples: "European Commission, EU agencies"
-                                }
-                            ]
-                        },
-                        {
-                            name: "Communications",
-                            children: [
-                                { 
-                                    name: "Communications Officer", 
-                                    value: 1100, 
-                                    exposure: "medium",
-                                    description: "Public relations and media management",
-                                    aiImpact: "AI drafting press releases and social content. Sentiment monitoring automated. Strategy and crisis comms remain human.",
-                                    skills: "Strategic comms, media relations, AI content tools",
-                                    examples: "EC Spokespersons' Service, EU agencies"
-                                },
-                                { 
-                                    name: "Graphic Designer", 
-                                    value: 400, 
-                                    exposure: "medium",
-                                    description: "Visual design for EU publications",
-                                    aiImpact: "Midjourney/DALL-E for initial concepts. AI layout suggestions. Creative direction and brand consistency human.",
-                                    skills: "Visual design, AI image generation, brand systems",
-                                    examples: "Publications Office, EU institutions"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    name: "LOW AI EXPOSURE",
-                    exposure: "low",
-                    children: [
-                        {
-                            name: "Leadership & Strategy",
-                            children: [
-                                { 
-                                    name: "Director/Head of Unit", 
-                                    value: 2500, 
-                                    exposure: "low",
-                                    description: "Leads departments and sets strategic direction",
-                                    aiImpact: "AI assisting with data-driven briefings. Decision support tools. Political acumen, negotiation, and leadership remain fundamentally human.",
-                                    skills: "Strategic leadership, political judgment, change management",
-                                    examples: "All EU institutions, directorate level"
-                                },
-                                { 
-                                    name: "Program Manager", 
-                                    value: 1300, 
-                                    exposure: "low",
-                                    description: "Manages complex EU programs and projects",
-                                    aiImpact: "AI project tracking and risk alerts. Stakeholder analysis. Human essential for conflict resolution and adaptive leadership.",
-                                    skills: "Program management, stakeholder alignment, governance",
-                                    examples: "European Commission, EIB, EU agencies"
-                                }
-                            ]
-                        },
-                        {
-                            name: "Diplomacy & Negotiation",
-                            children: [
-                                { 
-                                    name: "Diplomat/Negotiator", 
-                                    value: 800, 
-                                    exposure: "low",
-                                    description: "International negotiations and representation",
-                                    aiImpact: "AI briefing documents and scenario modeling. Real-time translation. Core negotiation strategy and relationship building human.",
-                                    skills: "Negotiation, diplomatic protocol, strategic thinking",
-                                    examples: "EEAS, Council, Member State representations"
-                                },
-                                { 
-                                    name: "Lobbyist/PA Specialist", 
-                                    value: 300, 
-                                    exposure: "low",
-                                    description: "Public affairs and stakeholder engagement",
-                                    aiImpact: "AI monitoring legislative developments. Network mapping. Trust-building and persuasive communication remain human.",
-                                    skills: "Political acumen, network building, advocacy",
-                                    examples: "EU representations, trade associations"
-                                }
-                            ]
-                        },
-                        {
-                            name: "Specialized Legal",
-                            children: [
-                                { 
-                                    name: "Judge/Advocate General", 
-                                    value: 200, 
-                                    exposure: "low",
-                                    description: "Adjudicates EU law cases",
-                                    aiImpact: "AI legal research assistance. Drafting support. Judicial reasoning, precedent interpretation, and final judgment remain human.",
-                                    skills: "Judicial reasoning, EU law interpretation, case management",
-                                    examples: "Court of Justice of the European Union"
-                                },
-                                { 
-                                    name: "Litigation Lawyer", 
-                                    value: 350, 
-                                    exposure: "low",
-                                    description: "Represents EU in court proceedings",
-                                    aiImpact: "AI document review and precedent research. Oral argument strategy and courtroom advocacy remain human skills.",
-                                    skills: "Litigation strategy, oral advocacy, EU procedural law",
-                                    examples: "European Commission Legal Service, Court"
-                                }
-                            ]
-                        },
-                        {
-                            name: "Field Operations",
-                            children: [
-                                { 
-                                    name: "Field Officer", 
-                                    value: 600, 
-                                    exposure: "low",
-                                    description: "Manages EU programs in member states/third countries",
-                                    aiImpact: "AI monitoring and reporting. Local context understanding, relationship management, and adaptive implementation remain human.",
-                                    skills: "Field operations, local stakeholder management, context analysis",
-                                    examples: "Commission representations, EUDs, humanitarian aid"
-                                },
-                                { 
-                                    name: "Inspector", 
-                                    value: 450, 
-                                    exposure: "low",
-                                    description: "On-site inspections and verification",
-                                    aiImpact: "AI pre-screening and documentation. Physical inspection, interviewing, and contextual judgment remain human.",
-                                    skills: "Investigation, regulatory inspection, evidence gathering",
-                                    examples: "OLAF, ECA, EU agencies"
-                                }
-                            ]
-                        },
-                        {
-                            name: "Security & Safety",
-                            children: [
-                                { 
-                                    name: "Security Officer", 
-                                    value: 500, 
-                                    exposure: "low",
-                                    description: "Physical and information security",
-                                    aiImpact: "AI threat detection and monitoring systems. Response planning and crisis management remain human-led.",
-                                    skills: "Security operations, crisis management, risk assessment",
-                                    examples: "EU institutions security services"
-                                }
-                            ]
-                        }
-                    ]
+        // Global state
+        let euData = null;
+        let countriesData = null;
+        let currentMode = 'eu';
+        let currentCountry = null;
+        let currentView = 'root'; // 'root' or 'detail' (showing jobs within a group)
+        let selectedGroup = null;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+        });
+        
+        // Load data files
+        async function loadData() {
+            try {
+                const [euResponse, countriesResponse] = await Promise.all([
+                    fetch('eu_treemap_data.json'),
+                    fetch('countries_detailed.json')
+                ]);
+                
+                if (!euResponse.ok || !countriesResponse.ok) {
+                    throw new Error('Failed to load data files');
                 }
-            ]
-        };
-
-        // Exposure colors
-        const exposureColors = {
-            high: "#dc2626",
-            medium: "#f59e0b", 
-            low: "#10b981"
-        };
-
-        // Calculate statistics
-        function calculateStats() {
-            let high = 0, medium = 0, low = 0, total = 0;
+                
+                euData = await euResponse.json();
+                countriesData = await countriesResponse.json();
+                
+                populateCountrySelect();
+                updateStats();
+                renderTreemap();
+                
+                document.getElementById('loading').style.display = 'none';
+            } catch (error) {
+                document.getElementById('loading').innerHTML = `
+                    <div class="error">
+                        <p>⚠️ Error loading data</p>
+                        <p>${error.message}</p>
+                    </div>`;
+            }
+        }
+        
+        function populateCountrySelect() {
+            const select = document.getElementById('country-select');
+            const countries = Object.entries(countriesData).sort((a, b) => 
+                a[1].name.localeCompare(b[1].name)
+            );
             
-            function traverse(node) {
-                if (node.children) {
-                    node.children.forEach(traverse);
-                } else {
-                    total++;
-                    if (node.exposure === "high") high++;
-                    else if (node.exposure === "medium") medium++;
-                    else if (node.exposure === "low") low++;
-                }
+            countries.forEach(([code, data]) => {
+                const option = document.createElement('option');
+                option.value = code;
+                option.textContent = `${data.flag} ${data.name}`;
+                select.appendChild(option);
+            });
+        }
+        
+        function setMode(mode) {
+            currentMode = mode;
+            currentView = 'root';
+            selectedGroup = null;
+            
+            document.getElementById('btn-eu').classList.toggle('active', mode === 'eu');
+            document.getElementById('btn-country').classList.toggle('active', mode === 'country');
+            document.getElementById('country-select').disabled = mode === 'eu';
+            document.getElementById('btn-back').disabled = true;
+            document.getElementById('breadcrumbs').style.display = 'none';
+            
+            if (mode === 'eu') {
+                currentCountry = null;
+                document.getElementById('country-select').value = '';
+                document.getElementById('insights-panel').style.display = 'none';
             }
             
-            traverse(jobData);
-            
-            document.getElementById('high-count').textContent = high;
-            document.getElementById('medium-count').textContent = medium;
-            document.getElementById('low-count').textContent = low;
-            document.getElementById('total-roles').textContent = total;
+            updateStats();
+            renderTreemap();
         }
-
-        calculateStats();
-
-        // Create treemap
-        const width = document.getElementById('treemap').clientWidth;
-        const height = document.getElementById('treemap').clientHeight;
-
-        const svg = d3.select("#treemap")
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height);
-
-        const root = d3.hierarchy(jobData)
-            .sum(d => d.value)
-            .sort((a, b) => b.value - a.value);
-
-        d3.treemap()
-            .size([width, height])
-            .paddingTop(20)
-            .paddingRight(6)
-            .paddingBottom(6)
-            .paddingLeft(6)
-            .round(true)
-            (root);
-
-        const tooltip = d3.select("#tooltip");
-
-        // Find exposure level for coloring
-        function findExposure(node) {
-            if (node.data.exposure) return node.data.exposure;
-            if (node.parent) return findExposure(node.parent);
+        
+        function selectCountry(countryCode) {
+            if (!countryCode) {
+                document.getElementById('insights-panel').style.display = 'none';
+                return;
+            }
+            
+            currentCountry = countryCode;
+            currentView = 'root';
+            selectedGroup = null;
+            document.getElementById('btn-back').disabled = true;
+            document.getElementById('breadcrumbs').style.display = 'none';
+            document.getElementById('bc-current').textContent = '';
+            
+            updateStats();
+            renderTreemap();
+            updateInsightsPanel(); // Hier wird der Text generiert
+        }
+        
+        function updateStats() {
+            const statsBar = document.getElementById('stats-bar');
+            let stats;
+            
+            if (currentMode === 'eu') {
+                stats = {
+                    total: euData.total_employment,
+                    avgAi: euData.avg_ai_exposure,
+                    high: euData.high_risk_pct,
+                    medium: euData.medium_risk_pct,
+                    low: euData.low_risk_pct
+                };
+            } else if (currentCountry && countriesData[currentCountry]) {
+                const m = countriesData[currentCountry].metrics;
+                stats = {
+                    total: m.total,
+                    avgAi: m.avg_ai_exposure,
+                    high: m.high_pct,
+                    medium: m.medium_pct,
+                    low: m.low_pct
+                };
+            } else {
+                stats = { total: 0, avgAi: 0, high: 0, medium: 0, low: 0 };
+            }
+            
+            statsBar.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${(stats.total / 1000000).toFixed(1)}M</div>
+                    <div class="stat-label">Total Workers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.avgAi.toFixed(2)}</div>
+                    <div class="stat-label">Avg AI Risk</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #ef4444;">${stats.high.toFixed(1)}%</div>
+                    <div class="stat-label">🔴 High Risk</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #f59e0b;">${stats.medium.toFixed(1)}%</div>
+                    <div class="stat-label">🟡 Medium Risk</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #10b981;">${stats.low.toFixed(1)}%</div>
+                    <div class="stat-label">🟢 Low Risk</div>
+                </div>
+            `;
+        }
+        
+        function getDataForTreemap() {
+            if (currentView === 'detail' && selectedGroup) {
+                // Show detailed jobs for selected group
+                let children;
+                if (currentMode === 'eu') {
+                    const group = euData.major_groups.find(g => g.major_group === selectedGroup);
+                    children = group ? group.children : [];
+                } else if (currentCountry && countriesData[currentCountry]) {
+                    const country = countriesData[currentCountry];
+                    children = country.jobs.filter(j => j.major_group === selectedGroup);
+                }
+                
+                if (!children || children.length === 0) return null;
+                
+                return { 
+                    name: getMajorGroupName(selectedGroup), 
+                    children: children.map(c => ({
+                        name: c.name,
+                        value: c.employment || c.value,
+                        aiExposure: c.aiExposure,
+                        color: c.color || getColorForExposure(c.aiExposure)
+                    }))
+                };
+            } else {
+                // Show major groups overview
+                if (currentMode === 'eu') {
+                    return {
+                        name: 'Europe',
+                        children: euData.major_groups.map(g => ({
+                            name: g.name,
+                            value: g.value,
+                            aiExposure: g.aiExposure,
+                            major_group: g.major_group,
+                            color: getColorForExposure(g.aiExposure),
+                            isGroup: true
+                        }))
+                    };
+                } else if (currentCountry && countriesData[currentCountry]) {
+                    const country = countriesData[currentCountry];
+                    
+                    // Aggregate jobs by major group
+                    const groupMap = {};
+                    country.jobs.forEach(job => {
+                        if (!groupMap[job.major_group]) {
+                            groupMap[job.major_group] = {
+                                name: getMajorGroupName(job.major_group),
+                                value: 0,
+                                aiSum: 0,
+                                major_group: job.major_group
+                            };
+                        }
+                        groupMap[job.major_group].value += job.employment;
+                        groupMap[job.major_group].aiSum += job.employment * job.aiExposure;
+                    });
+                    
+                    // Calculate weighted AI exposure and format
+                    const children = Object.values(groupMap).map(g => {
+                        const avgAi = g.aiSum / g.value;
+                        return {
+                            name: g.name,
+                            value: g.value,
+                            aiExposure: avgAi,
+                            major_group: g.major_group,
+                            color: getColorForExposure(avgAi),
+                            isGroup: true
+                        };
+                    }).sort((a, b) => b.value - a.value);
+                    
+                    return {
+                        name: country.name,
+                        children: children
+                    };
+                }
+            }
             return null;
         }
-
-        const leaf = svg.selectAll("g")
-            .data(root.leaves())
-            .join("g")
-            .attr("transform", d => `translate(${d.x0},${d.y0})`);
-
-        // Rectangles
-        leaf.append("rect")
-            .attr("class", "node")
-            .attr("width", d => d.x1 - d.x0)
-            .attr("height", d => d.y1 - d.y0)
-            .attr("fill", d => {
-                const exp = findExposure(d);
-                return exposureColors[exp] || "#64748b";
-            })
-            .attr("stroke", "#0a0a0f")
-            .attr("stroke-width", 1)
-            .on("mouseover", function(event, d) {
-                const exp = findExposure(d);
-                const expClass = `exposure-${exp}`;
-                const expText = exp === "high" ? "High" : exp === "medium" ? "Medium" : "Low";
+        
+        function getMajorGroupName(code) {
+            const names = {
+                "0": "Armed Forces", "1": "Managers", "2": "Professionals",
+                "3": "Technicians", "4": "Clerical Support", "5": "Service & Sales",
+                "6": "Agricultural", "7": "Craft & Trade", "8": "Machine Operators",
+                "9": "Elementary Occupations"
+            };
+            return names[code] || code;
+        }
+        
+        function getColorForExposure(ai) {
+            if (ai >= 7.5) return '#dc2626';
+            if (ai >= 5.0) return '#f59e0b';
+            return '#10b981';
+        }
+        
+        function renderTreemap() {
+            const container = document.getElementById('treemap-container');
+            const data = getDataForTreemap();
+            
+            console.log('Rendering treemap:', { currentMode, currentCountry, currentView, data });
+            
+            if (!data || !data.children || data.children.length === 0) {
+                // Clear previous SVG but keep breadcrumbs
+                const existingSvg = container.querySelector('svg');
+                if (existingSvg) existingSvg.remove();
                 
-                tooltip.style("opacity", 1)
-                    .html(`
-                        <h3>
-                            ${d.data.name}
-                            <span class="exposure-indicator ${expClass}">${expText}</span>
-                        </h3>
-                        <div class="role-type">${d.parent.data.name} • ${d.parent.parent.data.name}</div>
-                        <div class="description">${d.data.description}</div>
-                        <div class="impact">
-                            <div class="impact-title">AI Impact</div>
-                            <div class="impact-text">${d.data.aiImpact}</div>
-                        </div>
-                        <div class="skills">Key skills: ${d.data.skills}</div>
-                        <div class="examples">${d.data.examples}</div>
-                    `)
-                    .style("left", (event.pageX + 15) + "px")
-                    .style("top", (event.pageY - 10) + "px");
-            })
-            .on("mousemove", function(event) {
-                tooltip
-                    .style("left", (event.pageX + 15) + "px")
-                    .style("top", (event.pageY - 10) + "px");
-            })
-            .on("mouseout", function() {
-                tooltip.style("opacity", 0);
-            });
-
-        // Job title labels - only for larger boxes
-        leaf.append("text")
-            .attr("class", "node-label")
-            .style("font-size", d => {
-                const w = d.x1 - d.x0;
-                return w < 100 ? "10px" : "12px";
-            })
-            .selectAll("tspan")
-            .data(d => {
-                const w = d.x1 - d.x0;
-                const h = d.y1 - d.y0;
-                // Only show label if box is large enough
-                if (w < 80 || h < 50) return [];
-                // Truncate long names
-                let name = d.data.name;
-                if (w < 120 && name.length > 12) {
-                    name = name.substring(0, 10) + "...";
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error';
+                errorDiv.innerHTML = '<p>No data available for this selection</p>';
+                errorDiv.style.height = '600px';
+                errorDiv.style.display = 'flex';
+                errorDiv.style.alignItems = 'center';
+                errorDiv.style.justifyContent = 'center';
+                
+                // Remove old error if exists
+                const oldError = container.querySelector('.error');
+                if (oldError) oldError.remove();
+                
+                container.appendChild(errorDiv);
+                return;
+            }
+            
+            // Remove error div if exists
+            const oldError = container.querySelector('.error');
+            if (oldError) oldError.remove();
+            
+            // Clear previous SVG but keep breadcrumbs
+            const existingSvg = container.querySelector('svg');
+            if (existingSvg) existingSvg.remove();
+            
+            const width = container.clientWidth;
+            const height = 700;
+            
+            // Create SVG
+            const svg = d3.select('#treemap-container')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+            
+            // Create hierarchy
+            const root = d3.hierarchy(data)
+                .sum(d => d.value || 0)
+                .sort((a, b) => (b.value || 0) - (a.value || 0));
+            
+            // Create treemap layout
+            d3.treemap()
+                .size([width, height])
+                .padding(2)
+                .round(true)
+                (root);
+            
+            // Create nodes
+            const nodes = svg.selectAll('g')
+                .data(root.leaves())
+                .enter()
+                .append('g')
+                .attr('transform', d => `translate(${d.x0},${d.y0})`);
+            
+            // Add rectangles
+            nodes.append('rect')
+                .attr('width', d => Math.max(0, d.x1 - d.x0))
+                .attr('height', d => Math.max(0, d.y1 - d.y0))
+                .attr('fill', d => d.data.color || getColorForExposure(d.data.aiExposure || 5))
+                .attr('stroke', '#1e293b')
+                .attr('stroke-width', 1)
+                .attr('opacity', 0.9)
+                .attr('class', 'node')
+                .on('click', function(event, d) {
+                    if (d.data.isGroup && currentView === 'root') {
+                        drillDown(d.data.major_group, d.data.name);
+                    }
+                })
+                .on('mouseover', function(event, d) {
+                    d3.select(this).attr('opacity', 1);
+                    showTooltip(event, d);
+                })
+                .on('mousemove', moveTooltip)
+                .on('mouseout', function() {
+                    d3.select(this).attr('opacity', 0.9);
+                    hideTooltip();
+                });
+            
+            // Add labels
+            nodes.each(function(d) {
+                const width = d.x1 - d.x0;
+                const height = d.y1 - d.y0;
+                const node = d3.select(this);
+                
+                if (width > 60 && height > 40) {
+                    const name = d.data.name || 'Unknown';
+                    const displayName = name.length > 25 ? name.substring(0, 25) + '...' : name;
+                    
+                    node.append('text')
+                        .attr('x', 8)
+                        .attr('y', 20)
+                        .text(displayName)
+                        .attr('fill', 'white')
+                        .attr('font-size', '12px')
+                        .attr('font-weight', '600')
+                        .attr('class', 'node-label');
+                    
+                    if (height > 60) {
+                        const value = (d.value || 0) / 1000000;
+                        const ai = d.data.aiExposure || 0;
+                        
+                        node.append('text')
+                            .attr('x', 8)
+                            .attr('y', 38)
+                            .text(`${value.toFixed(2)}M`)
+                            .attr('fill', 'rgba(255,255,255,0.9)')
+                            .attr('font-size', '11px')
+                            .attr('class', 'node-label');
+                        
+                        node.append('text')
+                            .attr('x', 8)
+                            .attr('y', 54)
+                            .text(`AI: ${ai.toFixed(1)}`)
+                            .attr('fill', 'rgba(255,255,255,0.7)')
+                            .attr('font-size', '10px')
+                            .attr('class', 'node-label');
+                    }
                 }
-                return [name];
-            })
-            .join("tspan")
-            .attr("x", 6)
-            .attr("y", 14)
-            .text(d => d);
-
-        // Exposure badge - only for larger boxes
-        leaf.append("text")
-            .attr("class", "exposure-badge")
-            .style("font-size", "9px")
-            .selectAll("tspan")
-            .data(d => {
-                const w = d.x1 - d.x0;
-                const h = d.y1 - d.y0;
-                // Only show badge if box is large enough
-                if (w < 100 || h < 70) return [];
-                const exp = findExposure(d);
-                return [exp === "high" ? "HIGH" : exp === "medium" ? "MED" : "LOW"];
-            })
-            .join("tspan")
-            .attr("x", 6)
-            .attr("y", (d, i, nodes) => {
-                const parent = d3.select(nodes[i].parentNode);
-                const hasTitle = parent.select(".node-label tspan").size() > 0;
-                return hasTitle ? 28 : 14;
-            })
-            .text(d => d);
-
-        // Responsive
+            });
+        }
+        
+        function drillDown(groupCode, groupName) {
+            selectedGroup = groupCode;
+            currentView = 'detail';
+            
+            document.getElementById('btn-back').disabled = false;
+            document.getElementById('breadcrumbs').style.display = 'block';
+            document.getElementById('bc-separator').style.display = 'inline';
+            document.getElementById('bc-current').textContent = groupName;
+            
+            renderTreemap();
+        }
+        
+        function goBack() {
+            currentView = 'root';
+            selectedGroup = null;
+            
+            document.getElementById('btn-back').disabled = true;
+            document.getElementById('breadcrumbs').style.display = 'none';
+            document.getElementById('bc-current').textContent = '';
+            
+            renderTreemap();
+        }
+        
+        function goToRoot() {
+            goBack();
+        }
+        
+        function showTooltip(event, d) {
+            const tooltip = document.getElementById('tooltip');
+            const value = (d.value || 0) / 1000000;
+            const ai = d.data.aiExposure || 0;
+            const isGroup = d.data.isGroup;
+            
+            let riskLevel = ai >= 7.5 ? '🔴 High' : ai >= 5.0 ? '🟡 Medium' : '🟢 Low';
+            
+            tooltip.innerHTML = `
+                <h3>${d.data.name}</h3>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Employment:</span>
+                    <span class="tooltip-value">${value.toFixed(2)} million</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">AI Risk Score:</span>
+                    <span class="tooltip-value">${ai.toFixed(1)}/10</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Risk Level:</span>
+                    <span class="tooltip-value">${riskLevel}</span>
+                </div>
+                ${isGroup ? '<div class="tooltip-row"><span style="color: #60a5fa; font-size: 0.85rem;">Click to see detailed occupations →</span></div>' : ''}
+            `;
+            
+            tooltip.style.opacity = '1';
+            moveTooltip(event);
+        }
+        
+        function moveTooltip(event) {
+            const tooltip = document.getElementById('tooltip');
+            const x = event.pageX + 15;
+            const y = event.pageY + 15;
+            
+            const rect = tooltip.getBoundingClientRect();
+            const winWidth = window.innerWidth;
+            const winHeight = window.innerHeight;
+            
+            let finalX = x;
+            let finalY = y;
+            
+            if (x + rect.width > winWidth) finalX = x - rect.width - 15;
+            if (y + rect.height > winHeight) finalY = y - rect.height - 15;
+            
+            tooltip.style.left = finalX + 'px';
+            tooltip.style.top = finalY + 'px';
+        }
+        
+        function hideTooltip() {
+            document.getElementById('tooltip').style.opacity = '0';
+        }
+        
+        function updateInsightsPanel() {
+            const panel = document.getElementById('insights-panel');
+            const title = document.getElementById('insights-title');
+            const content = document.getElementById('insights-content');
+            
+            if (currentMode !== 'country' || !currentCountry || !countriesData[currentCountry]) {
+                panel.style.display = 'none';
+                return;
+            }
+            
+            const country = countriesData[currentCountry];
+            const m = country.metrics;
+            
+            // Find top 5 highest and lowest risk jobs
+            const sortedJobs = [...country.jobs].sort((a, b) => b.aiExposure - a.aiExposure);
+            const highestRisk = sortedJobs.slice(0, 5);
+            const lowestRisk = sortedJobs.slice(-5).reverse();
+            
+            // Find largest occupations
+            const largestJobs = [...country.jobs].sort((a, b) => b.employment - a.employment).slice(0, 5);
+            
+            // Calculate major group distribution
+            const groupTotals = {};
+            country.jobs.forEach(job => {
+                if (!groupTotals[job.major_group]) {
+                    groupTotals[job.major_group] = { name: getMajorGroupName(job.major_group), total: 0 };
+                }
+                groupTotals[job.major_group].total += job.employment;
+            });
+            const sortedGroups = Object.values(groupTotals).sort((a, b) => b.total - a.total);
+            
+            // Generate narrative based on risk level
+            let riskNarrative = '';
+            if (m.avg_ai_exposure >= 4.8) {
+                riskNarrative = `<strong style="color: #f59e0b;">⚠️ Above Average Risk:</strong> ${country.name} shows higher-than-average AI exposure. This is typically driven by a larger share of clerical work, administrative roles, and knowledge-intensive professions that face significant automation potential.`;
+            } else if (m.avg_ai_exposure <= 4.2) {
+                riskNarrative = `<strong style="color: #10b981;">✅ Lower Risk Profile:</strong> ${country.name} demonstrates a more resilient occupational structure. The economy relies more heavily on manual trades, personal services, and agricultural work—categories that are harder to automate with current AI technologies.`;
+            } else {
+                riskNarrative = `<strong style="color: #60a5fa;">➡️ Average Risk:</strong> ${country.name} aligns closely with the European average. The occupational mix provides a balanced exposure to AI transformation across different sectors.`;
+            }
+            
+            // Generate insights HTML
+            title.innerHTML = `${country.flag} ${country.name} — Detailed Analysis`;
+            
+            content.innerHTML = `
+                <div style="margin-bottom: 25px; padding: 20px; background: rgba(15, 23, 42, 0.6); border-radius: 12px; border-left: 4px solid ${getColorForExposure(m.avg_ai_exposure)};">
+                    ${riskNarrative}
+                </div>
+                
+                <h3 style="color: #60a5fa; margin: 25px 0 15px 0; font-size: 1.2rem;">📊 Key Metrics</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                    <div style="padding: 15px; background: rgba(30, 41, 59, 0.5); border-radius: 10px;">
+                        <div style="color: #94a3b8; font-size: 0.85rem;">Total Workforce</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #f8fafc;">${(m.total / 1000000).toFixed(2)}M</div>
+                    </div>
+                    <div style="padding: 15px; background: rgba(30, 41, 59, 0.5); border-radius: 10px;">
+                        <div style="color: #94a3b8; font-size: 0.85rem;">AI Risk Score</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: ${getColorForExposure(m.avg_ai_exposure)};">${m.avg_ai_exposure.toFixed(2)}/10</div>
+                    </div>
+                    <div style="padding: 15px; background: rgba(30, 41, 59, 0.5); border-radius: 10px;">
+                        <div style="color: #94a3b8; font-size: 0.85rem;">High Risk Workers</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #ef4444;">${m.high_pct.toFixed(1)}%</div>
+                    </div>
+                </div>
+                
+                <h3 style="color: #60a5fa; margin: 25px 0 15px 0; font-size: 1.2rem;">🏭 Largest Sectors</h3>
+                <div style="margin-bottom: 25px;">
+                    ${sortedGroups.slice(0, 3).map((g, i) => `
+                        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #334155;">
+                            <span>${i + 1}. ${g.name}</span>
+                            <span style="color: #94a3b8;">${(g.total / 1000).toFixed(0)}K workers</span>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
+                    <div>
+                        <h4 style="color: #ef4444; margin-bottom: 15px; font-size: 1.1rem;">🔴 Highest AI Risk Jobs</h4>
+                        <div style="background: rgba(30, 41, 59, 0.5); border-radius: 10px; padding: 15px;">
+                            ${highestRisk.map(job => `
+                                <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #334155; font-size: 0.9rem;">
+                                    <span>${job.name}</span>
+                                    <span style="color: #ef4444; font-weight: 600;">${job.aiExposure.toFixed(1)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 style="color: #10b981; margin-bottom: 15px; font-size: 1.1rem;">🟢 Most AI-Safe Jobs</h4>
+                        <div style="background: rgba(30, 41, 59, 0.5); border-radius: 10px; padding: 15px;">
+                            ${lowestRisk.map(job => `
+                                <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #334155; font-size: 0.9rem;">
+                                    <span>${job.name}</span>
+                                    <span style="color: #10b981; font-weight: 600;">${job.aiExposure.toFixed(1)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 style="color: #60a5fa; margin: 25px 0 15px 0; font-size: 1.2rem;">👥 Largest Occupations</h3>
+                <div style="background: rgba(30, 41, 59, 0.5); border-radius: 10px; padding: 15px;">
+                    ${largestJobs.map((job, i) => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #334155;">
+                            <div>
+                                <div style="font-weight: 600;">${i + 1}. ${job.name}</div>
+                                <div style="font-size: 0.85rem; color: #94a3b8;">${(job.employment / 1000).toFixed(0)}K workers</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="color: ${getColorForExposure(job.aiExposure)}; font-weight: 700;">AI: ${job.aiExposure.toFixed(1)}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div style="margin-top: 25px; padding: 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1)); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">
+                    <h4 style="color: #60a5fa; margin-bottom: 10px;">💡 Strategic Implications</h4>
+                    <p style="font-size: 0.95rem; color: #cbd5e1;">
+                        ${m.high_pct > 25 ? 
+                            `With <strong>${m.high_pct.toFixed(1)}%</strong> of workers in high-risk occupations, ${country.name} faces significant workforce transformation. Priority should be given to reskilling programs in administrative and IT sectors.` :
+                            m.low_pct > 65 ?
+                            `With <strong>${m.low_pct.toFixed(1)}%</strong> of workers in AI-resilient occupations, ${country.name} has natural protection. Focus should be on augmenting these roles with AI tools rather than replacement.` :
+                            `${country.name} has a balanced risk profile. A dual strategy of AI augmentation for medium-risk roles and selective automation for high-risk roles is recommended.`
+                        }
+                    </p>
+                </div>
+            `;
+            
+            panel.style.display = 'block';
+        }
+        
+        // Handle window resize
         window.addEventListener('resize', () => {
-            location.reload();
+            if (euData || countriesData) {
+                renderTreemap();
+            }
         });
     </script>
 </body>

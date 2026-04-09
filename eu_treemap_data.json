@@ -1,0 +1,642 @@
+{
+  "total_employment": 205622800.0,
+  "avg_ai_exposure": 4.471922600017263,
+  "high_risk_pct": 19.53935479975891,
+  "medium_risk_pct": 19.592519473854292,
+  "low_risk_pct": 60.8681257263868,
+  "major_groups": [
+    {
+      "name": "Professionals",
+      "major_group": "2",
+      "value": 46177200.0,
+      "aiExposure": 5.925430239704979,
+      "children": [
+        {
+          "name": "Nursing Professionals",
+          "isco": "2221",
+          "value": 10111018.746158574,
+          "aiExposure": 3.2,
+          "color": "#10b981"
+        },
+        {
+          "name": "Secondary Education Teachers",
+          "isco": "2330",
+          "value": 7982383.2206515055,
+          "aiExposure": 6.2,
+          "color": "#f59e0b"
+        },
+        {
+          "name": "Primary School Teachers",
+          "isco": "2341",
+          "value": 5960179.471419791,
+          "aiExposure": 5.8,
+          "color": "#f59e0b"
+        },
+        {
+          "name": "Accountants",
+          "isco": "2411",
+          "value": 4363702.82728949,
+          "aiExposure": 7.9,
+          "color": "#dc2626"
+        },
+        {
+          "name": "University & Higher Education Teachers",
+          "isco": "2310",
+          "value": 3015566.9944683467,
+          "aiExposure": 6.5,
+          "color": "#f59e0b"
+        },
+        {
+          "name": "Specialist Medical Practitioners",
+          "isco": "2212",
+          "value": 2412453.5955746775,
+          "aiExposure": 5.2,
+          "color": "#f59e0b"
+        },
+        {
+          "name": "Software Developers",
+          "isco": "2512",
+          "value": 2199590.0430239704,
+          "aiExposure": 9.2,
+          "color": "#dc2626"
+        },
+        {
+          "name": "Generalist Medical Practitioners",
+          "isco": "2211",
+          "value": 1490044.8678549477,
+          "aiExposure": 5.5,
+          "color": "#f59e0b"
+        },
+        {
+          "name": "Lawyers",
+          "isco": "2611",
+          "value": 1490044.8678549477,
+          "aiExposure": 7.0,
+          "color": "#f59e0b"
+        },
+        {
+          "name": "Journalists",
+          "isco": "2642",
+          "value": 993363.2452366318,
+          "aiExposure": 8.0,
+          "color": "#dc2626"
+        },
+        {
+          "name": "Engineering Professionals (nec)",
+          "isco": "2149",
+          "value": 745022.4339274738,
+          "aiExposure": 5.8,
+          "color": "#f59e0b"
+        },
+        {
+          "name": "Systems Analysts",
+          "isco": "2511",
+          "value": 745022.4339274738,
+          "aiExposure": 8.5,
+          "color": "#dc2626"
+        },
+        {
+          "name": "Financial & Investment Advisers",
+          "isco": "2412",
+          "value": 638590.6576521205,
+          "aiExposure": 7.5,
+          "color": "#dc2626"
+        },
+        {
+          "name": "Application Programmers",
+          "isco": "2514",
+          "value": 638590.6576521205,
+          "aiExposure": 9.0,
+          "color": "#dc2626"
+        },
+        {
+          "name": "Psychologists",
+          "isco": "2634",
+          "value": 638590.6576521205,
+          "aiExposure": 4.8,
+          "color": "#10b981"
+        },
+        {
+          "name": "Translators & Interpreters",
+          "isco": "2643",
+          "value": 638590.6576521205,
+          "aiExposure": 9.0,
+          "color": "#dc2626"
+        },
+        {
+          "name": "Civil Engineers",
+          "isco": "2142",
+          "value": 425727.1051014136,
+          "aiExposure": 4.2,
+          "color": "#10b981"
+        },
+        {
+          "name": "Financial Analysts",
+          "isco": "2413",
+          "value": 337033.9582052858,
+          "aiExposure": 8.2,
+          "color": "#dc2626"
+        },
+        {
+          "name": "Industrial & Production Engineers",
+          "isco": "2141",
+          "value": 315747.6029502151,
+          "aiExposure": 6.5,
+          "color": "#f59e0b"
+        },
+        {
+          "name": "Chemists",
+          "isco": "2113",
+          "value": 301556.6994468347,
+          "aiExposure": 5.5,
+          "color": "#f59e0b"
+        },
+        {
+          "name": "Web & Multimedia Developers",
+          "isco": "2513",
+          "value": 301556.6994468347,
+          "aiExposure": 8.8,
+          "color": "#dc2626"
+        },
+        {
+          "name": "Electrical Engineers",
+          "isco": "2151",
+          "value": 241245.35955746772,
+          "aiExposure": 5.5,
+          "color": "#f59e0b"
+        },
+        {
+          "name": "Mathematicians & Statisticians",
+          "isco": "2120",
+          "value": 149004.48678549478,
+          "aiExposure": 8.5,
+          "color": "#dc2626"
+        },
+        {
+          "name": "Physicists & Astronomers",
+          "isco": "2111",
+          "value": 42572.71051014136,
+          "aiExposure": 6.2,
+          "color": "#f59e0b"
+        }
+      ]
+    },
+    {
+      "name": "Technicians",
+      "major_group": "3",
+      "value": 33089300.0,
+      "aiExposure": 5.369254658385093,
+      "children": [
+        {
+          "name": "Nursing Associate Professionals",
+          "isco": "3221",
+          "value": 14557921.842650102,
+          "aiExposure": 3.5,
+          "color": "#10b981"
+        },
+        {
+          "name": "Accounting Associate Professionals",
+          "isco": "3313",
+          "value": 8906022.774327122,
+          "aiExposure": 7.5,
+          "color": "#dc2626"
+        },
+        {
+          "name": "ICT User Support Technicians",
+          "isco": "3512",
+          "value": 3596663.0434782607,
+          "aiExposure": 7.2,
+          "color": "#f59e0b"
+        },
+        {
+          "name": "ICT Operations Technicians",
+          "isco": "3511",
+          "value": 3082854.0372670805,
+          "aiExposure": 7.2,
+          "color": "#f59e0b"
+        },
+        {
+          "name": "Civil Engineering Technicians",
+          "isco": "3112",
+          "value": 1164633.7474120082,
+          "aiExposure": 3.5,
+          "color": "#10b981"
+        },
+        {
+          "name": "Electrical Engineering Technicians",
+          "isco": "3113",
+          "value": 890602.2774327121,
+          "aiExposure": 4.2,
+          "color": "#10b981"
+        },
+        {
+          "name": "Medical Imaging Technicians",
+          "isco": "3211",
+          "value": 890602.2774327121,
+          "aiExposure": 4.5,
+          "color": "#10b981"
+        }
+      ]
+    },
+    {
+      "name": "Service & Sales",
+      "major_group": "5",
+      "value": 33064100.0,
+      "aiExposure": 3.0253774263120055,
+      "children": [
+        {
+          "name": "Shop Sales Assistants",
+          "isco": "5222",
+          "value": 11528460.460100647,
+          "aiExposure": 3.5,
+          "color": "#10b981"
+        },
+        {
+          "name": "Waiters",
+          "isco": "5131",
+          "value": 6061355.499640546,
+          "aiExposure": 2.2,
+          "color": "#10b981"
+        },
+        {
+          "name": "Cashiers",
+          "isco": "5223",
+          "value": 5348254.852624011,
+          "aiExposure": 4.2,
+          "color": "#10b981"
+        },
+        {
+          "name": "Cooks",
+          "isco": "5120",
+          "value": 3185182.890007189,
+          "aiExposure": 1.8,
+          "color": "#10b981"
+        },
+        {
+          "name": "Health Care Assistants",
+          "isco": "5321",
+          "value": 2020451.8332135153,
+          "aiExposure": 2.8,
+          "color": "#10b981"
+        },
+        {
+          "name": "Security Guards",
+          "isco": "5414",
+          "value": 2020451.8332135153,
+          "aiExposure": 2.0,
+          "color": "#10b981"
+        },
+        {
+          "name": "Police Officers",
+          "isco": "5412",
+          "value": 1616361.4665708123,
+          "aiExposure": 3.8,
+          "color": "#10b981"
+        },
+        {
+          "name": "Hairdressers",
+          "isco": "5141",
+          "value": 1283581.1646297628,
+          "aiExposure": 1.8,
+          "color": "#10b981"
+        }
+      ]
+    },
+    {
+      "name": "Craft & Trade",
+      "major_group": "7",
+      "value": 23444499.999999996,
+      "aiExposure": 2.4717808219178083,
+      "children": [
+        {
+          "name": "Electricians",
+          "isco": "7127",
+          "value": 6294687.671232876,
+          "aiExposure": 2.8,
+          "color": "#10b981"
+        },
+        {
+          "name": "Motor Vehicle Mechanics",
+          "isco": "7231",
+          "value": 5652372.602739725,
+          "aiExposure": 3.5,
+          "color": "#10b981"
+        },
+        {
+          "name": "Plumbers",
+          "isco": "7126",
+          "value": 4817363.01369863,
+          "aiExposure": 2.5,
+          "color": "#10b981"
+        },
+        {
+          "name": "Carpenters & Joiners",
+          "isco": "7115",
+          "value": 2826186.3013698626,
+          "aiExposure": 1.2,
+          "color": "#10b981"
+        },
+        {
+          "name": "Welders",
+          "isco": "7212",
+          "value": 2505028.7671232875,
+          "aiExposure": 1.5,
+          "color": "#10b981"
+        },
+        {
+          "name": "Bricklayers",
+          "isco": "7112",
+          "value": 1348861.6438356165,
+          "aiExposure": 1.0,
+          "color": "#10b981"
+        }
+      ]
+    },
+    {
+      "name": "Clerical Support",
+      "major_group": "4",
+      "value": 20266300.000000004,
+      "aiExposure": 8.206337135614701,
+      "children": [
+        {
+          "name": "General Office Clerks",
+          "isco": "4110",
+          "value": 10017562.737642586,
+          "aiExposure": 8.5,
+          "color": "#dc2626"
+        },
+        {
+          "name": "Accounting Clerks",
+          "isco": "4311",
+          "value": 4366629.911280102,
+          "aiExposure": 7.8,
+          "color": "#dc2626"
+        },
+        {
+          "name": "Contact Centre Clerks",
+          "isco": "4222",
+          "value": 2671350.0633713566,
+          "aiExposure": 7.8,
+          "color": "#dc2626"
+        },
+        {
+          "name": "Secretaries (general)",
+          "isco": "4120",
+          "value": 2157628.897338403,
+          "aiExposure": 7.8,
+          "color": "#dc2626"
+        },
+        {
+          "name": "Data Entry Clerks",
+          "isco": "4131",
+          "value": 616465.3992395437,
+          "aiExposure": 9.5,
+          "color": "#dc2626"
+        },
+        {
+          "name": "Bank Tellers",
+          "isco": "4132",
+          "value": 436662.99112801015,
+          "aiExposure": 8.2,
+          "color": "#dc2626"
+        }
+      ]
+    },
+    {
+      "name": "Elementary Occupations",
+      "major_group": "9",
+      "value": 16993600.0,
+      "aiExposure": 1.4242021276595742,
+      "children": [
+        {
+          "name": "Domestic Cleaners",
+          "isco": "9111",
+          "value": 6869753.191489361,
+          "aiExposure": 1.2,
+          "color": "#10b981"
+        },
+        {
+          "name": "Fast Food Preparers",
+          "isco": "9411",
+          "value": 2350178.723404255,
+          "aiExposure": 1.8,
+          "color": "#10b981"
+        },
+        {
+          "name": "Office Cleaners",
+          "isco": "9131",
+          "value": 1898221.2765957445,
+          "aiExposure": 1.2,
+          "color": "#10b981"
+        },
+        {
+          "name": "Shelf Fillers",
+          "isco": "9334",
+          "value": 1898221.2765957445,
+          "aiExposure": 2.5,
+          "color": "#10b981"
+        },
+        {
+          "name": "Freight Handlers",
+          "isco": "9333",
+          "value": 1446263.829787234,
+          "aiExposure": 1.8,
+          "color": "#10b981"
+        },
+        {
+          "name": "Construction Labourers",
+          "isco": "9313",
+          "value": 949110.6382978723,
+          "aiExposure": 0.8,
+          "color": "#10b981"
+        },
+        {
+          "name": "Garden Labourers",
+          "isco": "9214",
+          "value": 813523.4042553192,
+          "aiExposure": 0.8,
+          "color": "#10b981"
+        },
+        {
+          "name": "Vehicle Cleaners",
+          "isco": "9112",
+          "value": 384163.829787234,
+          "aiExposure": 1.0,
+          "color": "#10b981"
+        },
+        {
+          "name": "Garbage Collectors",
+          "isco": "9611",
+          "value": 384163.829787234,
+          "aiExposure": 0.8,
+          "color": "#10b981"
+        }
+      ]
+    },
+    {
+      "name": "Machine Operators",
+      "major_group": "8",
+      "value": 15167900.0,
+      "aiExposure": 2.6808781051415367,
+      "children": [
+        {
+          "name": "Heavy Truck Drivers",
+          "isco": "8324",
+          "value": 8543444.540727902,
+          "aiExposure": 2.8,
+          "color": "#10b981"
+        },
+        {
+          "name": "Bus Drivers",
+          "isco": "8323",
+          "value": 3285940.2079722704,
+          "aiExposure": 2.2,
+          "color": "#10b981"
+        },
+        {
+          "name": "Car & Taxi Drivers",
+          "isco": "8322",
+          "value": 1927751.5886770654,
+          "aiExposure": 3.5,
+          "color": "#10b981"
+        },
+        {
+          "name": "Packing Machine Operators",
+          "isco": "8183",
+          "value": 920063.2582322357,
+          "aiExposure": 2.2,
+          "color": "#10b981"
+        },
+        {
+          "name": "Earthmoving Plant Operators",
+          "isco": "8342",
+          "value": 227825.18775274407,
+          "aiExposure": 1.2,
+          "color": "#10b981"
+        },
+        {
+          "name": "Metal Processing Operators",
+          "isco": "8121",
+          "value": 184012.65164644716,
+          "aiExposure": 2.2,
+          "color": "#10b981"
+        },
+        {
+          "name": "Miners",
+          "isco": "8111",
+          "value": 78862.56499133448,
+          "aiExposure": 0.8,
+          "color": "#10b981"
+        }
+      ]
+    },
+    {
+      "name": "Managers",
+      "major_group": "1",
+      "value": 10740200.0,
+      "aiExposure": 6.27029702970297,
+      "children": [
+        {
+          "name": "Managing Directors & CEOs",
+          "isco": "1120",
+          "value": 3721851.4851485146,
+          "aiExposure": 6.8,
+          "color": "#f59e0b"
+        },
+        {
+          "name": "Sales & Marketing Managers",
+          "isco": "1221",
+          "value": 2791388.613861386,
+          "aiExposure": 6.5,
+          "color": "#f59e0b"
+        },
+        {
+          "name": "Finance Managers",
+          "isco": "1211",
+          "value": 1595079.207920792,
+          "aiExposure": 7.2,
+          "color": "#f59e0b"
+        },
+        {
+          "name": "Agricultural & Forestry Managers",
+          "isco": "1311",
+          "value": 1129847.7722772278,
+          "aiExposure": 2.1,
+          "color": "#10b981"
+        },
+        {
+          "name": "Supply & Distribution Managers",
+          "isco": "1324",
+          "value": 903878.2178217822,
+          "aiExposure": 6.8,
+          "color": "#f59e0b"
+        },
+        {
+          "name": "Legislators",
+          "isco": "1111",
+          "value": 598154.7029702971,
+          "aiExposure": 6.5,
+          "color": "#f59e0b"
+        }
+      ]
+    },
+    {
+      "name": "Agricultural",
+      "major_group": "6",
+      "value": 5480300.000000001,
+      "aiExposure": 1.442168674698795,
+      "children": [
+        {
+          "name": "Gardeners",
+          "isco": "6113",
+          "value": 2905219.277108434,
+          "aiExposure": 1.2,
+          "color": "#10b981"
+        },
+        {
+          "name": "Field Crop Growers",
+          "isco": "6111",
+          "value": 1386581.9277108435,
+          "aiExposure": 2.5,
+          "color": "#10b981"
+        },
+        {
+          "name": "Forestry Workers",
+          "isco": "6210",
+          "value": 1188498.7951807228,
+          "aiExposure": 0.8,
+          "color": "#10b981"
+        }
+      ]
+    },
+    {
+      "name": "Armed Forces",
+      "major_group": "0",
+      "value": 1199400.0,
+      "aiExposure": 3.2,
+      "children": [
+        {
+          "name": "Armed Forces (other ranks)",
+          "isco": "0310",
+          "value": 945680.7692307692,
+          "aiExposure": 3.2,
+          "color": "#10b981"
+        },
+        {
+          "name": "Non-commissioned Officers",
+          "isco": "0210",
+          "value": 156844.61538461538,
+          "aiExposure": 3.2,
+          "color": "#10b981"
+        },
+        {
+          "name": "Commissioned Officers",
+          "isco": "0110",
+          "value": 96874.61538461539,
+          "aiExposure": 3.2,
+          "color": "#10b981"
+        }
+      ]
+    }
+  ]
+}

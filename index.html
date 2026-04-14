@@ -315,7 +315,7 @@
         async function loadData() {
             try {
                 const [euResponse, countriesResponse] = await Promise.all([
-                    fetch('eu_treemap_data.json'),
+                    fetch('eu_treemap_data_extended.json'),
                     fetch('countries_detailed.json')
                 ]);
                 
